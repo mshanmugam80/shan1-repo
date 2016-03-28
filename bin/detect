@@ -2,7 +2,7 @@
 # bin/detect <build-dir>
 
 if [ -f $1/project.json ]; then
-  echo "Node.js"
+  echo "Asp.Net App"
   exit 0
 fi
 
