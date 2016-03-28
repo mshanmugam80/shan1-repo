@@ -41,11 +41,8 @@ SRC_DIR=`mktemp -d`
 
 mkdir -p ${CACHE_DIR}
 
-
 export PATH="/app/aspnet/bin:${PATH}"
 export LD_LIBRARY_PATH="/app/aspnet/lib:${LD_LIBRARY_PATH}"
-cp -r ~/.config ${BUILD_DIR}/.
-
 
 # Install DNX
 # TODO: consider making this not dependent on GitHub being up
