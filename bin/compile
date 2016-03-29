@@ -92,8 +92,17 @@ mkdir -p ${DNU_LOCAL_CACHE}
 mkdir -p ${DNU_CACHE_LOCATION}
 ln -s ${DNU_CACHE_LOCATION} ${DNU_LOCAL_CACHE}/cache 
 
+echo "Build diretory path:${BUILD_DIR}"
 echo "libuv install"
 curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${BUILD_DIR}
+cd /usr/local/src/libuv-1.8.0
+sh autogen.sh
+./configure
+make
+make install
+rm -rf /usr/local/src/libuv-1.8.0 && cd ~/
+ldconfig
+echo "libuv installed."
 
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
 dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}
