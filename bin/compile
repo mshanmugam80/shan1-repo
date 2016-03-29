@@ -47,8 +47,9 @@ export LD_LIBRARY_PATH="/app/aspnet/lib:${LD_LIBRARY_PATH}"
 # Install DNX
 # TODO: consider making this not dependent on GitHub being up
 touch ~/.profile
-curl -sSL https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.sh | DNX_BRANCH=dev sh && source ~/.dnx/dnvm/dnvm.sh
-
+curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh \
+	| sh && source ~/.dnx/dnvm/dnvm.sh
+	
 export DNVM_RUNTIME_LOCAL_CACHE="/app/.dnx"
 export DNVM_RUNTIME_CACHE_LOCATION="${CACHE_DIR}/dnx/runtimes"
 mkdir -p ${DNVM_RUNTIME_LOCAL_CACHE}
