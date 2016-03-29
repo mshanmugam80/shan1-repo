@@ -96,9 +96,11 @@ echo "Build diretory path:${BUILD_DIR}"
 echo "libuv install"
 curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${BUILD_DIR}
 cd ${BUILD_DIR}/libuv-${LIBUV_VERSION}
+echo "installing..."
 sh autogen.sh
 ./configure
 make
+chmod 777 /usr/local/lib
 make install
 echo "rm -rf ${BUILD_DIR}/${LIBUV_VERSION}"
 echo "cd ~/"
