@@ -99,8 +99,9 @@ cd ${BUILD_DIR}/libuv-${LIBUV_VERSION}
 echo "installing..."
 sh autogen.sh
 ./configure
+echo "make command to be excuted"
 make
-chmod 777 /usr/local/lib
+echo "make install command to be excuted"
 make install
 echo "rm -rf ${BUILD_DIR}/${LIBUV_VERSION}"
 echo "cd ~/"
