@@ -61,6 +61,14 @@ echo "dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default"
 dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default
 echo "dnvm installed."
 
+echo "libunwind8 install..."
+sudo apt-get install libunwind8 gettext libssl-dev libcurl4-openssl-dev zlib1g libicu-dev uuid-dev
+echo "libunwind8 installed."
+
+echo "DNVM to install DNX for .NET Core"
+dnvm upgrade -r coreclr
+echo "dnvm upgraded."
+
 # Add DNX to the build output
 DNX_BUILD_LOCATION=${BUILD_DIR}/.dnx/runtimes/
 mkdir -p ${DNX_BUILD_LOCATION}
