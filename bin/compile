@@ -16,7 +16,7 @@ BUILDPACK_DIR=`cd $(dirname $0); cd ..; pwd`
 
 : ${LIBUV_VERSION:="1.8.0"}
 : ${DNVM_BRANCH:="dev"}
-: ${DNX_VERSION:="l.0.0-rc1-16231"}
+: ${DNX_VERSION:="latest"}
 
 if [ -n "$BUILD_DEBUG" ]; then
 	DNU_FLAGS=""
@@ -57,8 +57,8 @@ mkdir -p ${DNVM_RUNTIME_LOCAL_CACHE}
 mkdir -p ${DNVM_RUNTIME_CACHE_LOCATION}
 ln -s ${DNVM_RUNTIME_CACHE_LOCATION} ${DNVM_RUNTIME_LOCAL_CACHE}/runtimes
 
-echo "dnvm install $DNX_VERSION $DNVM_FLAGS -a default"
-dnvm install $DNX_VERSION $DNVM_FLAGS -a default
+echo "dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default"
+dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default
 echo "dnvm installed."
 
 # Add DNX to the build output
