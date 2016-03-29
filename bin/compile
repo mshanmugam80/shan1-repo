@@ -61,9 +61,10 @@ echo "dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default"
 dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default
 echo "dnvm installed."
 
-#echo "libunwind8 install..."
+echo "libunwind8 install..."
+apt-get install libunwind8 libssl-dev unzip
 #apt-get install libunwind8 gettext libssl-dev libcurl4-openssl-dev zlib1g libicu-dev uuid-dev
-#echo "libunwind8 installed."
+echo "libunwind8 installed."
 
 echo "DNVM to install DNX for .NET Core"
 dnvm upgrade -runtime coreclr
