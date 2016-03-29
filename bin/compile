@@ -61,8 +61,7 @@ echo "dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default"
 dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default
 echo "dnvm installed."
 
-apt-cache search libunwind8
-
+#apt-cache search libunwind8
 #echo "libunwind8 install..."
 #apt-get install libunwind8 libssl-dev unzip
 #apt-get install libunwind8 gettext libssl-dev libcurl4-openssl-dev zlib1g libicu-dev uuid-dev
@@ -93,6 +92,9 @@ mkdir -p ${DNU_LOCAL_CACHE}
 mkdir -p ${DNU_CACHE_LOCATION}
 ln -s ${DNU_CACHE_LOCATION} ${DNU_LOCAL_CACHE}/cache 
 
+echo "libuv install"
+curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | sudo tar zxfv - -C ${BUILD_DIR}
+
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
 dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}
 
@@ -104,8 +106,8 @@ find ${BUILD_DIR} -iname dnxcore50 -print0 | xargs -r -0 rm --
 mkdir -p ${BUILD_DIR}/.profile.d
 cp -n ${BUILDPACK_DIR}/.profile.d/* ${BUILD_DIR}/.profile.d/
 
-echo "libuv install"
-curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | sudo tar zxfv - -C ${BUILD_DIR}
+#echo "libuv install"
+#curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | sudo tar zxfv - -C ${BUILD_DIR}
 if [ -e ${SRC_DIR}/Procfile ]; then
 	cp ${SRC_DIR}/Procfile ${BUILD_DIR}
 else
