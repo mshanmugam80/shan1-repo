@@ -93,7 +93,7 @@ mkdir -p ${DNU_CACHE_LOCATION}
 ln -s ${DNU_CACHE_LOCATION} ${DNU_LOCAL_CACHE}/cache 
 
 echo "libuv install"
-curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | sudo tar zxfv - -C ${BUILD_DIR}
+curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${BUILD_DIR}
 
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
 dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}
