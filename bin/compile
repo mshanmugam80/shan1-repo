@@ -99,16 +99,15 @@ cd ${BUILD_DIR}/libuv-${LIBUV_VERSION}
 echo "installing..."
 sh autogen.sh
 ./configure
-echo "make command to be excuted"
+chmod 777 /usr/local/lib
 make
-echo "make install command to be excuted"
-make install -p
+make install
+echo "rm -rf ${BUILD_DIR}/${LIBUV_VERSION}"
+echo "cd ~/"
 rm -rf ${BUILD_DIR}/${LIBUV_VERSION} && cd ~/
 ldconfig
 echo "libuv installed."
 
-clear
-echo "app restoring starts"
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
 dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}
 
