@@ -93,8 +93,7 @@ find ${BUILD_DIR} -iname dnxcore50 -print0 | xargs -r -0 rm --
 mkdir -p ${BUILD_DIR}/.profile.d
 cp -n ${BUILDPACK_DIR}/.profile.d/* ${BUILD_DIR}/.profile.d/
 
-curl https://github.com/friism/libuv-builder/releases/download/v${LIBUV_VERSION}/libuv-${LIBUV_VERSION}.tar.gz -sL \
-	 | tar xz -C ${BUILD_DIR}
+curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | sudo tar zxfv - -C ${BUILD_DIR}
 if [ -e ${SRC_DIR}/Procfile ]; then
 	cp ${SRC_DIR}/Procfile ${BUILD_DIR}
 else
