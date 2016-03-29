@@ -16,7 +16,7 @@ BUILDPACK_DIR=`cd $(dirname $0); cd ..; pwd`
 
 : ${LIBUV_VERSION:="1.8.0"}
 : ${DNVM_BRANCH:="dev"}
-: ${DNX_VERSION:="latest"}
+: ${DNX_VERSION:="l.0.0-rc1-16231"}
 
 if [ -n "$BUILD_DEBUG" ]; then
 	DNU_FLAGS=""
