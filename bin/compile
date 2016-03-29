@@ -31,6 +31,7 @@ if [ -n "$UNSTABLE_TOOLCHAIN" ]; then
 else
 	DNVM_FLAGS=""
 fi
+echo "DNVM FLAGS: ${DNVM_FLAGS}"
 
 SRC_DIR=`mktemp -d`
 # Move the app source code into temporary src dir using subshell to not leak shopt
