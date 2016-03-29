@@ -103,12 +103,12 @@ echo "make command to be excuted"
 make
 echo "make install command to be excuted"
 make install -p
-echo "rm -rf ${BUILD_DIR}/${LIBUV_VERSION}"
-echo "cd ~/"
 rm -rf ${BUILD_DIR}/${LIBUV_VERSION} && cd ~/
-ldconfig -p
+ldconfig
 echo "libuv installed."
 
+clear
+echo "app restoring starts"
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
 dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}
 
