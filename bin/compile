@@ -63,10 +63,10 @@ echo "dnvm installed."
 
 apt-cache search libunwind8
 
-echo "libunwind8 install..."
-apt-get install libunwind8 libssl-dev unzip
+#echo "libunwind8 install..."
+#apt-get install libunwind8 libssl-dev unzip
 #apt-get install libunwind8 gettext libssl-dev libcurl4-openssl-dev zlib1g libicu-dev uuid-dev
-echo "libunwind8 installed."
+#echo "libunwind8 installed."
 
 echo "DNVM to install DNX for .NET Core"
 dnvm upgrade -runtime coreclr
@@ -80,16 +80,10 @@ mkdir -p ${DNX_BUILD_LOCATION}
 cp -r ~/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
 
 DEPLOYMENT_FILE_LOCATION=${SRC_DIR}/.deployment
-if [ -n "$PROJECT" ]; then
-	PROJECT_JSON_FILE=${SRC_DIR}/${PROJECT}
-	echo "Project file configured in PROJECT environment variable"
-elif [ -e ${DEPLOYMENT_FILE_LOCATION} ]; then
-	PROJECT_JSON_FILE=${SRC_DIR}/$(awk -F "=" '/project/ {print $2}' ${DEPLOYMENT_FILE_LOCATION} | tr -d ' ')
-	echo "Project file configured in .deployment file"
-else
-	PROJECT_JSON_FILES=$(find ${SRC_DIR}/. -maxdepth 3 -iname "project.json")
-	printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
-	PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
+if [ -n "project.json" ]; then
+   PROJECT_JSON_FILES=$(find ${SRC_DIR}/. -maxdepth 3 -iname "project.json")
+   printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
+   PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 fi
 echo "Building ${PROJECT_JSON_FILE}"
 
@@ -99,6 +93,7 @@ mkdir -p ${DNU_LOCAL_CACHE}
 mkdir -p ${DNU_CACHE_LOCATION}
 ln -s ${DNU_CACHE_LOCATION} ${DNU_LOCAL_CACHE}/cache 
 
+echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
 dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}
 
 dnu publish --out ${BUILD_DIR} $DNU_FLAGS --no-source --configuration Release ${PROJECT_JSON_FILE}
@@ -109,6 +104,7 @@ find ${BUILD_DIR} -iname dnxcore50 -print0 | xargs -r -0 rm --
 mkdir -p ${BUILD_DIR}/.profile.d
 cp -n ${BUILDPACK_DIR}/.profile.d/* ${BUILD_DIR}/.profile.d/
 
+echo "libuv install"
 curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | sudo tar zxfv - -C ${BUILD_DIR}
 if [ -e ${SRC_DIR}/Procfile ]; then
 	cp ${SRC_DIR}/Procfile ${BUILD_DIR}
