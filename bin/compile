@@ -64,8 +64,8 @@ echo "dnvm installed."
 #apt-cache search libunwind8
 echo "libunwind8 install..."
 #apt-get install libunwind8 libssl-dev unzip
-mount -o remount,rw /
 apt-get install libunwind8 gettext libssl-dev libcurl4-openssl-dev zlib1g libicu-dev uuid-dev
+#rm /var/cache//lock
 echo "libunwind8 installed."
 
 echo "DNVM to install DNX for .NET Core"
