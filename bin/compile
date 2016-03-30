@@ -104,7 +104,7 @@ make
 #echo "rm -rf ${BUILD_DIR}/${LIBUV_VERSION}"
 echo "cd ~/"
 #rm -rf ${BUILD_DIR}/${LIBUV_VERSION} && cd ~/
-#ldconfig
+ldconfig
 echo "libuv installed."
 
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
