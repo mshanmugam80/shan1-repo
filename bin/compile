@@ -49,6 +49,7 @@ export LD_LIBRARY_PATH="/app/aspnet/lib:${LD_LIBRARY_PATH}"
 # Install DNX
 touch ~/.profile
 curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ~/.dnx/dnvm/dnvm.sh
+dnvm
 
 export DNVM_RUNTIME_LOCAL_CACHE="/app/.dnx"
 export DNVM_RUNTIME_CACHE_LOCATION="${CACHE_DIR}/dnx/runtimes"
@@ -61,10 +62,10 @@ dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default
 echo "dnvm installed."
 
 #apt-cache search libunwind8
-#echo "libunwind8 install..."
+echo "libunwind8 install..."
 #apt-get install libunwind8 libssl-dev unzip
-#apt-get install libunwind8 gettext libssl-dev libcurl4-openssl-dev zlib1g libicu-dev uuid-dev
-#echo "libunwind8 installed."
+apt-get install libunwind8 gettext libssl-dev libcurl4-openssl-dev zlib1g libicu-dev uuid-dev
+echo "libunwind8 installed."
 
 echo "DNVM to install DNX for .NET Core"
 dnvm upgrade -runtime coreclr
