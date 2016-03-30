@@ -91,9 +91,6 @@ mkdir -p ${DNU_LOCAL_CACHE}
 mkdir -p ${DNU_CACHE_LOCATION}
 ln -s ${DNU_CACHE_LOCATION} ${DNU_LOCAL_CACHE}/cache 
 
-#Current working directory
-CURT_DIR=pwd
-
 echo "Build diretory path:${BUILD_DIR}"
 echo "libuv install"
 curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${BUILD_DIR}
@@ -106,9 +103,7 @@ make
 #make install
 #echo "rm -rf ${BUILD_DIR}/${LIBUV_VERSION}"
 #rm -rf ${BUILD_DIR}/${LIBUV_VERSION} && cd ~/
-echo "${CURT_DIR}"
-cd ${CURT_DIR}
-ldconfig
+#ldconfig
 echo "libuv installed."
 
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
