@@ -9,6 +9,24 @@ if [ $STACK != "cedar-14" ]; then
 fi
 
 echo "$0 - $1 - $2 - $3"
+bash -c '
+sudo apt-get update
+sudo apt-get install -y curl unzip libunwind8 gettext libssl-dev libcurl4-openssl-dev zlib1g libicu-dev uuid-dev make automake libtool
+curl -sSL https://github.com/libuv/libuv/archive/v1.8.0.tar.gz | sudo tar zxfv - -C /usr/local/src
+cd /usr/local/src/libuv-1.8.0
+sudo sh autogen.sh
+sudo ./configure
+sudo make
+sudo make install
+sudo rm -rf /usr/local/src/libuv-1.8.0 && cd ~/
+sudo ldconfig
+curl -sSL https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.sh | DNX_BRANCH=dev sh
+'
+source ~/.dnx/dnvm/dnvm.sh
+dnvm list
+
+exit 0
+
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
