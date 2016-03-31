@@ -87,25 +87,13 @@ echo "dnvm installed."
 
 #apt-cache search libunwind8
 
-for PACKAGE in $(libunwind8 gettext libssl-dev libcurl4-openssl-dev zlib1g libicu-dev uuid-dev); do
-  if [[ $PACKAGE == *deb ]]; then
-    PACKAGE_NAME=$(basename $PACKAGE .deb)
-    PACKAGE_FILE=$APT_CACHE_DIR/archives/$PACKAGE_NAME.deb
-
+for PACKAGE in libunwind8 gettext libssl-dev libcurl4-openssl-dev zlib1g libicu-dev uuid-dev
+do
     topic "Fetching $PACKAGE"
-    curl -s -L -z $PACKAGE_FILE -o $PACKAGE_FILE $PACKAGE 2>&1 | indent
-  else
-    topic "Fetching .debs for $PACKAGE"
     apt-get $APT_OPTIONS -y --force-yes -d install --reinstall $PACKAGE | indent
-  fi
 done
 
 mkdir -p $BUILD_DIR/.apt
-
-for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
-  topic "Installing $(basename $DEB)"
-  dpkg -x $DEB $BUILD_DIR/.apt/
-done
 
 topic "Writing profile script"
 mkdir -p $BUILD_DIR/.profile.d
