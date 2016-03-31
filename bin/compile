@@ -16,11 +16,11 @@ LD_DIR=`cd $(dirname $0); cd ..; pwd`
 echo "build directory info: $BUILD_DIR"
 ls $BUILD_DIR
 echo "Cache directory: ls $CACHE_DIR"
-ls $CACHE_DIR
+#ls $CACHE_DIR
 echo "Env directory: ls $ENV_DIR"
-ls $ENV_DIR
+#ls $ENV_DIR
 echo "Load directory: ls $LD_DIR"
-ls $LD_DIR
+#ls $LD_DIR
 
 : ${LIBUV_VERSION:="1.8.0"}
 : ${DNVM_BRANCH:="dev"}
