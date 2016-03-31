@@ -13,7 +13,11 @@ echo "$0 - $1 - $2 - $3"
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
-LD_DIR=`cd $(dirname $0); cd ..; pwd`
+LD_DIR=`cd $(dirname $0); cd ..; pwd
+echo "build directory: $BUILD_DIR"
+echo "Cache directory: $CACHE_DIR"
+echo "Env directory: $ENV_DIR"
+echo "Load directory: $LD_DIR"
 
 : ${LIBUV_VERSION:="1.8.0"}
 : ${DNVM_BRANCH:="dev"}
