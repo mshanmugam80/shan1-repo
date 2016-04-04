@@ -58,13 +58,6 @@ else
 fi
 echo "DNVM FLAGS: ${DNVM_FLAGS}"
 
-SRC_DIR=`mktemp -d`
-# Move the app source code into temporary src dir using subshell to not leak shopt
-(
-	shopt -s dotglob
-	mv ${BUILD_DIR}/* ${SRC_DIR}
-)
-
 mkdir -p ${CACHE_DIR}
 
 export PATH="/app/aspnet/bin:${PATH}"
@@ -97,7 +90,7 @@ echo "dnvm installed."
 topic "Updating apt caches"
 apt-get $APT_OPTIONS update | indent
 
-for PACKAGE in $(cat $SRC_DIR/Aptfile); do
+for PACKAGE in $(cat $BUILD_DIR/Aptfile); do
   if [[ $PACKAGE == *deb ]]; then
     PACKAGE_NAME=$(basename $PACKAGE .deb)
     PACKAGE_FILE=$APT_CACHE_DIR/archives/$PACKAGE_NAME.deb
@@ -154,9 +147,9 @@ DNX_BUILD_LOCATION=${BUILD_DIR}/.dnx/runtimes/
 mkdir -p ${DNX_BUILD_LOCATION}
 cp -r ~/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
 
-DEPLOYMENT_FILE_LOCATION=${SRC_DIR}/.deployment
+DEPLOYMENT_FILE_LOCATION=${BUILD_DIR}/.deployment
 if [ -n "project.json" ]; then
-   PROJECT_JSON_FILES=$(find ${SRC_DIR}/. -maxdepth 3 -iname "project.json")
+   PROJECT_JSON_FILES=$(find ${BUILD_DIR}/. -maxdepth 3 -iname "project.json")
    printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
    PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 fi
@@ -173,13 +166,13 @@ echo "libuv install"
 wget -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${BUILD_DIR}
 cd ${BUILD_DIR}/libuv-${LIBUV_VERSION}
 echo "installing..."
-sh autogen.sh
+sh autogen.sh --prefix=$HOME
 ./configure
 #chmod 777 /usr/local/lib
 make
-#make install
-#echo "rm -rf ${BUILD_DIR}/${LIBUV_VERSION}"
-#rm -rf ${BUILD_DIR}/${LIBUV_VERSION} && cd ~/
+make install
+echo "rm -rf ${BUILD_DIR}/${LIBUV_VERSION}"
+rm -rf ${BUILD_DIR}/${LIBUV_VERSION} && cd ~/
 #ldconfig
 echo "libuv installed."
 
@@ -191,10 +184,7 @@ dnu publish --out ${BUILD_DIR} $DNU_FLAGS --no-source --configuration Release ${
 # Clean out core-stuff that we don't need in the slug
 find ${BUILD_DIR} -iname dnxcore50 -print0 | xargs -r -0 rm --
 
-cp -n ${SRC_DIR}/.profile.d/* ${BUILD_DIR}/.profile.d/
-if [ -e ${SRC_DIR}/Procfile ]; then
-	cp ${SRC_DIR}/Procfile ${BUILD_DIR}
-else
+if [ -n ${BUILD_DIR}/Procfile ]; then
 	ROOTS=`cd ${BUILD_DIR}; find approot/packages/ -name root`
 	if [ $( echo "${ROOTS}" | wc -l ) -gt 0 ]; then
 	APP_ROOT=$(echo "$ROOTS" | head -1)
