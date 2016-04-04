@@ -58,12 +58,6 @@ touch ~/.profile
 curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ~/.dnx/dnvm/dnvm.sh
 dnvm
 
-export DNVM_RUNTIME_LOCAL_CACHE="/app/.dnx"
-export DNVM_RUNTIME_CACHE_LOCATION="${CACHE_DIR}/dnx/runtimes"
-mkdir -p ${DNVM_RUNTIME_LOCAL_CACHE}
-mkdir -p ${DNVM_RUNTIME_CACHE_LOCATION}
-ln -s ${DNVM_RUNTIME_CACHE_LOCATION} ${DNVM_RUNTIME_LOCAL_CACHE}/runtimes
-
 APT_CACHE_DIR="$CACHE_DIR/apt/cache"
 APT_STATE_DIR="$CACHE_DIR/apt/state"
 
@@ -71,10 +65,6 @@ mkdir -p "$APT_CACHE_DIR/archives/partial"
 mkdir -p "$APT_STATE_DIR/lists/partial"
 
 APT_OPTIONS="-o debug::nolocking=true -o dir::cache=$APT_CACHE_DIR -o dir::state=$APT_STATE_DIR"
-
-echo "dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default"
-dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default
-echo "dnvm installed."
 
 #topic "Updating apt caches"
 #apt-get $APT_OPTIONS update | indent
@@ -122,6 +112,16 @@ export PKG_CONFIG_PATH="$BUILD_DIR/.apt/usr/lib/x86_64-linux-gnu/pkgconfig:$BUIL
 
 #give environment to later buildpacks
 export | grep -E -e ' (PATH|LD_LIBRARY_PATH|LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPPATH|PKG_CONFIG_PATH)='  > "$LP_DIR/export"
+
+export DNVM_RUNTIME_LOCAL_CACHE="/app/.dnx"
+export DNVM_RUNTIME_CACHE_LOCATION="${CACHE_DIR}/dnx/runtimes"
+mkdir -p ${DNVM_RUNTIME_LOCAL_CACHE}
+mkdir -p ${DNVM_RUNTIME_CACHE_LOCATION}
+ln -s ${DNVM_RUNTIME_CACHE_LOCATION} ${DNVM_RUNTIME_LOCAL_CACHE}/runtimes
+
+echo "dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default"
+dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default
+echo "dnvm installed."
 
 echo "DNVM to install DNX for .NET Core"
 dnvm upgrade -runtime coreclr
