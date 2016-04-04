@@ -191,11 +191,7 @@ dnu publish --out ${BUILD_DIR} $DNU_FLAGS --no-source --configuration Release ${
 # Clean out core-stuff that we don't need in the slug
 find ${BUILD_DIR} -iname dnxcore50 -print0 | xargs -r -0 rm --
 
-mkdir -p ${BUILD_DIR}/.profile.d
-cp -n ${LD_DIR}/.profile.d/* ${BUILD_DIR}/.profile.d/
-
-#echo "libuv install"
-#curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | sudo tar zxfv - -C ${BUILD_DIR}
+cp -n ${SRC_DIR}/.profile.d/* ${BUILD_DIR}/.profile.d/
 if [ -e ${SRC_DIR}/Procfile ]; then
 	cp ${SRC_DIR}/Procfile ${BUILD_DIR}
 else
