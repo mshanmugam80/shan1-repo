@@ -134,7 +134,7 @@ sh autogen.sh
 ./configure --prefix=$HOME/libuvinstall
 make
 make install
-export LD_LIBRARY_PATH="$HOME/libuvinstall\$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="\$HOME/libuvinstall:$LD_LIBRARY_PATH"
 cd $OLDPWD
 topic "libuv installed."
 
