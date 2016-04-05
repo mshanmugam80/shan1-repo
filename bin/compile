@@ -161,7 +161,7 @@ echo "dnvm runtimes"
 dnvm list
 
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
-dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}
+dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE} --no-cache
 
 topic "dnu publish starts."
 dnu publish --out ${BUILD_DIR} $DNU_FLAGS --no-source --configuration Release ${PROJECT_JSON_FILE}
