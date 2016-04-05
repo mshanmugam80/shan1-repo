@@ -146,7 +146,7 @@ DNX_BUILD_LOCATION=${DEPLOYMENT_FILE_LOCATION}/.dnx/runtimes/
 mkdir -p ${DNX_BUILD_LOCATION}
 cp -r ~/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
 
-mv -rf ${BUILD_DIR} ${DEPLOYMENT_FILE_LOCATION}
+mv -f ${BUILD_DIR} ${DEPLOYMENT_FILE_LOCATION}
 if [ -n "project.json" ]; then
    PROJECT_JSON_FILES=$(find ${DEPLOYMENT_FILE_LOCATION}/. -maxdepth 3 -iname "project.json")
    printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
