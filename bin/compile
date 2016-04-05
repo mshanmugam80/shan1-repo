@@ -148,6 +148,8 @@ cp -r ~/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
 
 echo "Build Directory Path: ${BUILD_DIR}"
 cp -r ${BUILD_DIR}/* ${DEPLOYMENT_FILE_LOCATION}
+ls ${DEPLOYMENT_FILE_LOCATION} -l
+
 if [ -n "project.json" ]; then
    PROJECT_JSON_FILES=$(find ${BUILD_DIR}/. -maxdepth 3 -iname "project.json")
    printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
@@ -169,7 +171,7 @@ dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE} --no-cache
 
 topic "dnu publish starts."
 echo "Deploment location: $DEPLOYMENT_FILE_LOCATION"
-dnu publish --out $DEPLOYMENT_FILE_LOCATION $DNU_FLAGS --no-source --configuration Release --runtime active
+dnu publish --out $DEPLOYMENT_FILE_LOCATION $DNU_FLAGS --no-source --configuration Release ${PROJECT_JSON_FILE} --runtime active
 topic "dnu publish ended."
 
 # Clean out core-stuff that we don't need in the slug
