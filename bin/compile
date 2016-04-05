@@ -139,12 +139,16 @@ cd $OLDPWD
 topic "libuv installed."
 
 # Add DNX to the build output
-DNX_BUILD_LOCATION=${BUILD_DIR}/.dnx/runtimes/
+DEPLOYMENT_FILE_LOCATION=${HOME}/vendor/aspwebapp
+mkdir -p ${DEPLOYMENT_FILE_LOCATION}
+
+DNX_BUILD_LOCATION=${DEPLOYMENT_FILE_LOCATION}/.dnx/runtimes/
 mkdir -p ${DNX_BUILD_LOCATION}
 cp -r ~/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
 
+mv -rf ${BUILD_DIR} ${DEPLOYMENT_FILE_LOCATION}
 if [ -n "project.json" ]; then
-   PROJECT_JSON_FILES=$(find ${BUILD_DIR}/. -maxdepth 3 -iname "project.json")
+   PROJECT_JSON_FILES=$(find ${DEPLOYMENT_FILE_LOCATION}/. -maxdepth 3 -iname "project.json")
    printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
    PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 fi
@@ -163,10 +167,7 @@ echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
 dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE} --no-cache
 
 topic "dnu publish starts."
-DEPLOYMENT_FILE_LOCATION=${HOME}/vendor/aspwebapp
-mkdir -p ${DEPLOYMENT_FILE_LOCATION}
 echo "Deploment location: $DEPLOYMENT_FILE_LOCATION"
-
 dnu publish --out $DEPLOYMENT_FILE_LOCATION $DNU_FLAGS --no-source --configuration Release ${PROJECT_JSON_FILE} --runtime active
 topic "dnu publish ended."
 
@@ -174,12 +175,12 @@ topic "dnu publish ended."
 #find ${BUILD_DIR} -iname dnxcore50 -print0 | xargs -r -0 rm --
 
 topic "Copy to output directory"
-if [ -n ${BUILD_DIR}/Procfile ]; then
-	ROOTS=`cd ${BUILD_DIR}; find approot/packages/ -name root`
+if [ -n ${DEPLOYMENT_FILE_LOCATION}/Procfile ]; then
+	ROOTS=`cd ${DEPLOYMENT_FILE_LOCATION}; find approot/packages/ -name root`
 	echo "Root path: ${ROOTS}"
 	if [ $( echo "${ROOTS}" | wc -l ) -gt 0 ]; then
 	APP_ROOT=$(echo "$ROOTS" | head -1)
-	cat << EOT >> ${BUILD_DIR}/Procfile
+	cat << EOT >> ${DEPLOYMENT_FILE_LOCATION}/Procfile
 web: ./kestrel --server.urls http://+:\$PORT
 EOT
 	fi
