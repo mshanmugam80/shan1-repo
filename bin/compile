@@ -127,16 +127,16 @@ echo "DNVM to install DNX for .NET Core"
 dnvm upgrade -runtime coreclr
 echo "dnvm upgraded."
 
-topic "libuv install"
-curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${BUILD_DIR}
-cd ${BUILD_DIR}/libuv-${LIBUV_VERSION}
-sh autogen.sh
-./configure --prefix=$HOME
-make
-make install
-rm -rf ${BUILD_DIR}/${LIBUV_VERSION} && cd ~/
+#topic "libuv install"
+#curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${BUILD_DIR}
+#cd ${BUILD_DIR}/libuv-${LIBUV_VERSION}
+#sh autogen.sh
+#./configure --prefix=$HOME
+#make
+#make install
+#rm -rf ${BUILD_DIR}/${LIBUV_VERSION} && cd ~/
 #ldconfig
-topic "libuv installed."
+#topic "libuv installed."
 
 # Add DNX to the build output
 DNX_BUILD_LOCATION=${BUILD_DIR}/.dnx/runtimes/
