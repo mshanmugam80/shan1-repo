@@ -168,7 +168,7 @@ dnu publish --out ${BUILD_DIR} $DNU_FLAGS --no-source --configuration Release ${
 topic "dnu publish ended."
 
 # Clean out core-stuff that we don't need in the slug
-find ${BUILD_DIR} -iname dnxcore50 -print0 | xargs -r -0 rm --
+#find ${BUILD_DIR} -iname dnxcore50 -print0 | xargs -r -0 rm --
 
 topic "Copy to output directory"
 if [ -n ${BUILD_DIR}/Procfile ]; then
