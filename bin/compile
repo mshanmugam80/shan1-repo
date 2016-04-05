@@ -136,7 +136,6 @@ make
 make install
 export LD_LIBRARY_PATH="$HOME/libuvinstall"
 cd $OLDPWD
-./build.sh
 topic "libuv installed."
 
 # Add DNX to the build output
