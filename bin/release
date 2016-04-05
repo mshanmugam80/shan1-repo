@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+DEPLOYMENT_PATH=${HOME}/vendor/aspwebapp
 echo "App is to be started on port: $PORT"
 
 if [ -n ${DEPLOYMENT_PATH}/Procfile ]; then
