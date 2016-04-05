@@ -163,6 +163,7 @@ dnvm list
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
 dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}
 
+topic "dnu publish starts"
 dnu publish --out ${BUILD_DIR} $DNU_FLAGS --no-source --configuration Release ${PROJECT_JSON_FILE}
 
 # Clean out core-stuff that we don't need in the slug
