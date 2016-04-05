@@ -174,15 +174,3 @@ topic "dnu publish ended."
 
 # Clean out core-stuff that we don't need in the slug
 #find ${BUILD_DIR} -iname dnxcore50 -print0 | xargs -r -0 rm --
-
-topic "Copy to output directory"
-if [ -n ${DEPLOYMENT_PATH}/Procfile ]; then
-	#ROOTS=`cd ${DEPLOYMENT_PATH}; find approot/packages/ -name root`
-	#echo "Root path: ${ROOTS}"
-	#if [ $( echo "${ROOTS}" | wc -l ) -gt 0 ]; then
-	#APP_ROOT=$(echo "$ROOTS" | head -1)
-	cat << EOT >> ${DEPLOYMENT_PATH}/Procfile
-web: ./kestrel --server.urls http://+:\$PORT
-EOT
-	#fi
-fi
