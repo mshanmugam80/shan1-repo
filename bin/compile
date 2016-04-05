@@ -163,8 +163,8 @@ echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
 dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE} --no-cache
 
 topic "dnu publish starts."
-mkdir -p vendor/aspwebapp
-DEPLOYMENT_FILE_LOCATION=vendor/aspwebapp
+DEPLOYMENT_FILE_LOCATION=${HOME}/vendor/aspwebapp
+mkdir -p ${DEPLOYMENT_FILE_LOCATION}
 echo "Deploment location: $DEPLOYMENT_FILE_LOCATION"
 
 dnu publish --out $DEPLOYMENT_FILE_LOCATION $DNU_FLAGS --no-source --configuration Release ${PROJECT_JSON_FILE} --runtime active
