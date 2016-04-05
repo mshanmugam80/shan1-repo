@@ -168,7 +168,7 @@ echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
 dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE} --no-cache
 
 topic "dnu publish starts."
-echo "Deploment location: $DEPLOYMENT_FILE_LOCATION"
+echo "Deploment location: $DEPLOYMENT_PATH"
 dnu publish $DNU_FLAGS --no-source --configuration Release ${PROJECT_JSON_FILE} --runtime active
 topic "dnu publish ended."
 
@@ -176,12 +176,12 @@ topic "dnu publish ended."
 #find ${BUILD_DIR} -iname dnxcore50 -print0 | xargs -r -0 rm --
 
 topic "Copy to output directory"
-if [ -n ${DEPLOYMENT_FILE_LOCATION}/Procfile ]; then
-	ROOTS=`cd ${DEPLOYMENT_FILE_LOCATION}; find approot/packages/ -name root`
+if [ -n ${DEPLOYMENT_PATH}/Procfile ]; then
+	ROOTS=`cd ${DEPLOYMENT_PATH}; find approot/packages/ -name root`
 	echo "Root path: ${ROOTS}"
 	if [ $( echo "${ROOTS}" | wc -l ) -gt 0 ]; then
 	APP_ROOT=$(echo "$ROOTS" | head -1)
-	cat << EOT >> ${DEPLOYMENT_FILE_LOCATION}/Procfile
+	cat << EOT >> ${DEPLOYMENT_PATH}/Procfile
 web: ./kestrel --server.urls http://+:\$PORT
 EOT
 	fi
