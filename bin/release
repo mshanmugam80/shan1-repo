@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
-cat &lt;&lt;EOF
----
-config_vars:
-PATH: $PATH:/app/consoleapp/bin
-EOF
+echo "App is to be started on port: $PORT"
+
+if [ -n ${DEPLOYMENT_PATH}/Procfile ]; then
+	#ROOTS=`cd ${DEPLOYMENT_PATH}; find approot/packages/ -name root`
+	#echo "Root path: ${ROOTS}"
+	#if [ $( echo "${ROOTS}" | wc -l ) -gt 0 ]; then
+	#APP_ROOT=$(echo "$ROOTS" | head -1)
+cat << EOT >> ${DEPLOYMENT_PATH}/Procfile
+default_process_types:
+  web: ./kestrel --server.urls http://+:\$PORT
+EOT
+	#fi
+fi
