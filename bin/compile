@@ -49,15 +49,6 @@ else
 fi
 echo "DNVM FLAGS: ${DNVM_FLAGS}"
 
-mkdir -p ${CACHE_DIR}
-export PATH="/app/aspnet/bin:${PATH}"
-export LD_LIBRARY_PATH="/app/aspnet/lib:${LD_LIBRARY_PATH}"
-
-# Install DNX
-touch ~/.profile
-curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ~/.dnx/dnvm/dnvm.sh
-dnvm
-
 APT_CACHE_DIR="$CACHE_DIR/apt/cache"
 APT_STATE_DIR="$CACHE_DIR/apt/state"
 
@@ -66,8 +57,17 @@ mkdir -p "$APT_STATE_DIR/lists/partial"
 
 APT_OPTIONS="-o debug::nolocking=true -o dir::cache=$APT_CACHE_DIR -o dir::state=$APT_STATE_DIR"
 
-#topic "Updating apt caches"
-#apt-get $APT_OPTIONS update | indent
+topic "Updating apt caches"
+apt-get $APT_OPTIONS update | indent
+
+mkdir -p ${CACHE_DIR}
+export PATH="/app/aspnet/bin:${PATH}"
+export LD_LIBRARY_PATH="/app/aspnet/lib:${LD_LIBRARY_PATH}"
+
+# Install DNX
+touch ~/.profile
+curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ~/.dnx/dnvm/dnvm.sh
+dnvm
 
 for PACKAGE in $(cat $BUILD_DIR/Aptfile); do
   if [[ $PACKAGE == *deb ]]; then
@@ -134,7 +134,7 @@ sh autogen.sh
 ./configure --prefix=$HOME/libuvinstall
 make
 make install
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:\$HOME/libuvinstall"
+export LD_LIBRARY_PATH="$HOME/libuvinstall\$LD_LIBRARY_PATH"
 cd $OLDPWD
 topic "libuv installed."
 
