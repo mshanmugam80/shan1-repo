@@ -143,7 +143,6 @@ DNX_BUILD_LOCATION=${BUILD_DIR}/.dnx/runtimes/
 mkdir -p ${DNX_BUILD_LOCATION}
 cp -r ~/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
 
-DEPLOYMENT_FILE_LOCATION=${BUILD_DIR}/.deployment
 if [ -n "project.json" ]; then
    PROJECT_JSON_FILES=$(find ${BUILD_DIR}/. -maxdepth 3 -iname "project.json")
    printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
@@ -164,6 +163,10 @@ echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
 dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE} --no-cache
 
 topic "dnu publish starts."
+mkdir -p vendor/aspwebapp
+DEPLOYMENT_FILE_LOCATION=vendor/aspwebapp
+echo "Deploment location: $DEPLOYMENT_FILE_LOCATION"
+
 dnu publish --out $DEPLOYMENT_FILE_LOCATION $DNU_FLAGS --no-source --configuration Release ${PROJECT_JSON_FILE} --runtime active
 topic "dnu publish ended."
 
