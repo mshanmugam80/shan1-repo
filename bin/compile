@@ -187,3 +187,7 @@ topic "dnu publish starts."
 echo "Deploment location: $DEPLOYMENT_PATH"
 dnu publish $DNU_FLAGS --configuration Release ${PROJECT_JSON_FILE} --no-source --runtime $DNX_VERSION
 topic "dnu publish ended."
+
+cat <<EOF > Procfile
+    web: --server.urls http://+:$PORT
+EOF
