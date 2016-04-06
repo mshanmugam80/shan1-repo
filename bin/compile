@@ -133,12 +133,6 @@ echo "DNVM to install DNX for .NET Core"
 dnvm upgrade -runtime coreclr
 echo "dnvm upgraded."
 
-topic "DNU version"
-dnu --version
-
-topic "DNX version"
-dnx --version
-
 topic "libuv install"
 curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${DEPLOYMENT_PATH}
 cd ${DEPLOYMENT_PATH}/libuv-${LIBUV_VERSION}
@@ -155,6 +149,9 @@ export DNX_BUILD_LOCATION=${DEPLOYMENT_PATH}/.dnx/runtimes/
 mkdir -p ${DNX_BUILD_LOCATION}
 DNX_VERSION=$(dnvm alias default)
 cp -r ~/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
+
+echo "DNX version"
+~/.dnx/runtimes/dnx --version
 
 if [ -n "project.json" ]; then
    PROJECT_JSON_FILES=$(find ${DEPLOYMENT_PATH}/. -maxdepth 3 -iname "project.json")
