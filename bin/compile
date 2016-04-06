@@ -151,7 +151,7 @@ DNX_VERSION=$(dnvm alias default)
 cp -r ~/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
 
 echo "DNX version"
-ls $DNX_BUILD_LOCATION -l
+ls $DNX_BUILD_LOCATION/$DNX_VERSION -l
 ls $DEPLOYMENT_PATH -l
 $DEPLOYMENT_PATH/dnx --version
 
