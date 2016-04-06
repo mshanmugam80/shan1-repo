@@ -3,10 +3,3 @@ cat <<EOF
 ---
 EOF
 
-if [ -d "/app/vendor/aspwebapp/" ]; then
-    cat <<EOF
-default_process_types:
-    web: ./approot/web --server-urls http://+:$PORT
-EOF
-fi
-
