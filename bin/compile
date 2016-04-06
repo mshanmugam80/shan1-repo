@@ -36,6 +36,7 @@ function indent() {
 }
 
 DEPLOYMENT_PATH=${HOME}/vendor/aspwebapp
+export ${DEPLOYMENT_PATH}
 mkdir -p ${DEPLOYMENT_PATH}
 cp -r ${BUILD_DIR}/* ${DEPLOYMENT_PATH}
 cd ${DEPLOYMENT_PATH}
@@ -160,6 +161,7 @@ if [ -n "project.json" ]; then
    PROJECT_JSON_FILES=$(find ${DEPLOYMENT_PATH}/. -maxdepth 3 -iname "project.json")
    printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
    PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
+   
 fi
 echo "Building ${PROJECT_JSON_FILE}"
 
@@ -182,7 +184,7 @@ topic "dnu publish ended."
 
 topic "Profile file setting:"
 cat <<EOF > Procfile
-    web: exec dnx -p ${PROJECT_JSON_FILE} web --server.urls http://+:$PORT
+    web: ./approot/web --server.urls http://+:$PORT
 EOF
 # Clean out core-stuff that we don't need in the slug
 #find ${BUILD_DIR} -iname dnxcore50 -print0 | xargs -r -0 rm --
