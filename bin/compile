@@ -164,12 +164,9 @@ echo "Approot Path: $DEPLOYMENT_PATH/approot"
 chmod -R 777 $DEPLOYMENT_PATH/approot
 ls $DEPLOYMENT_PATH/approot -l
 
-if [ -n "project.json" ]; then
-   PROJECT_JSON_FILES=$(find ${DEPLOYMENT_PATH}/. -maxdepth 3 -iname "project.json")
-   printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
-   PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
-fi
-echo "Building ${PROJECT_JSON_FILE}"
+PROJECT_JSON_FILES=$(find ${DEPLOYMENT_PATH}/. -maxdepth 3 -iname "project.json")
+printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
+PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 
 export DNU_LOCAL_CACHE="/app/.local/share/dnu"
 export DNU_CACHE_LOCATION="${CACHE_DIR}/dnu/cache"
@@ -184,7 +181,7 @@ echo "Path : $PATH"
 cat <<EOF > $DEPLOYMENT_PATH/Procfile
     web: ./approot/web --server.urls http://+:$PORT
 EOF
-
+echo "Building ${PROJECT_JSON_FILE}"
 ls $DEPLOYMENT_PATH -l
 
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
