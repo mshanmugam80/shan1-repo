@@ -170,7 +170,7 @@ dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE} --no-cache
 
 topic "dnu publish starts."
 echo "Deploment location: $DEPLOYMENT_PATH"
-dnu publish $DNU_FLAGS --configuration Release ${PROJECT_JSON_FILE} --no-source --runtime Active
+dnu publish $DNU_FLAGS --configuration Release ${PROJECT_JSON_FILE} --no-source --runtime active
 topic "dnu publish ended."
 
 exec dnx -p ${PROJECT_JSON_FILE} web "$@"
