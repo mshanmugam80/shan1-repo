@@ -152,18 +152,6 @@ cp -r ~/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
 DNX_RUNTIME_PATH=$DNX_BUILD_LOCATION/$DNX_VERSION/bin
 export PATH=$DNX_RUNTIME_PATH:$PATH
 
-mkdir -p $DEPLOYMENT_PATH/approot
-cat <<EOF >$DEPLOYMENT_PATH/approot/web
-source ${DEPLOYMENT_PATH}/.profile.d/000_apt.sh
-echo "DNX VERSION"
-$DNX_RUNTIME_PATH/dnx --version
-web: $DNX_RUNTIME_PATH/dnx -p $DEPLOYMENT_PATH/project.json web "$@"
-EOF
-
-echo "Approot Path: $DEPLOYMENT_PATH/approot"
-chmod -R 777 $DEPLOYMENT_PATH/approot
-ls $DEPLOYMENT_PATH/approot -l
-
 PROJECT_JSON_FILES=$(find ${DEPLOYMENT_PATH}/. -maxdepth 3 -iname "project.json")
 printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
 PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
@@ -176,15 +164,6 @@ ln -s ${DNU_CACHE_LOCATION} ${DNU_LOCAL_CACHE}/cache
 
 echo "dnvm runtimes"
 dnvm list
-
-echo "Path : $PATH"
-cat <<EOF > $DEPLOYMENT_PATH/Procfile
-    web: ./approot/web --server.urls http://+:$PORT
-EOF
-chmod 777 $DEPLOYMENT_PATH/Procfile
-
-echo "Building ${PROJECT_JSON_FILE}"
-ls $DEPLOYMENT_PATH -l
 
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
 dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE} --no-cache
