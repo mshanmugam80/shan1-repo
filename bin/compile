@@ -12,6 +12,7 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 LD_DIR=`cd $(dirname $0); cd ..; pwd`
+echo "Environment path: $ENV_DIR"
 
 : ${LIBUV_VERSION:="1.8.0"}
 : ${DNVM_BRANCH:="dev"}
@@ -169,7 +170,7 @@ dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE} --no-cache
 
 topic "dnu publish starts."
 echo "Deploment location: $DEPLOYMENT_PATH"
-dnu publish $DNU_FLAGS --no-source --configuration Release ${PROJECT_JSON_FILE} --runtime active
+dnu publish $DNU_FLAGS --no-source --configuration Release ${PROJECT_JSON_FILE}
 topic "dnu publish ended."
 
 # Clean out core-stuff that we don't need in the slug
