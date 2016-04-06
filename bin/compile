@@ -39,6 +39,7 @@ export DEPLOYMENT_PATH="${HOME}/vendor/aspwebapp"
 mkdir -p ${DEPLOYMENT_PATH}
 cp -r ${BUILD_DIR}/* ${DEPLOYMENT_PATH}
 cd ${DEPLOYMENT_PATH}
+export PATH="$DEPLOYMENT_PATH:$PATH"
 
 if [ -n "$BUILD_DEBUG" ]; then
 	DNU_FLAGS=""
@@ -149,9 +150,8 @@ DNX_BUILD_LOCATION=${DEPLOYMENT_PATH}/.dnx/runtimes/
 mkdir -p ${DNX_BUILD_LOCATION}
 DNX_VERSION=$(dnvm alias default)
 cp -r ~/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
-
-export DNX_RUNTIME_PATH=$DNX_BUILD_LOCATION/$DNX_VERSION/bin
-$DNX_RUNTIME_PATH/dnx --version
+DNX_RUNTIME_PATH="$DNX_BUILD_LOCATION/$DNX_VERSION/bin"
+export PATH="$DNX_RUNTIME_PATH:$PATH"
 
 if [ -n "project.json" ]; then
    PROJECT_JSON_FILES=$(find ${DEPLOYMENT_PATH}/. -maxdepth 3 -iname "project.json")
