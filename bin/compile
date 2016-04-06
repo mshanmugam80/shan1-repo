@@ -178,7 +178,7 @@ topic "Profile file setting:"
 cat <<EOF > Procfile
     web: /app/vendor/aspwebapp/bin/output/web --server.urls http://+:$PORT
 EOF
-cat /app/vendor/aspwebapp/Procfile
+ls ./approot/ -l
 
 # Clean out core-stuff that we don't need in the slug
 #find ${BUILD_DIR} -iname dnxcore50 -print0 | xargs -r -0 rm --
