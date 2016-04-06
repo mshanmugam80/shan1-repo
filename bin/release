@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-echo "Profile file setting:"
-source compile.sh
-echo "Deployment Path: $DEPLOYMENT_PATH"
 cat <<EOF > Procfile
-    web: $DEPLOYMENT_PATH/approot/web --server.urls http://+:$PORT
+    web: app/vendor/aspwebapp/approot/web --server.urls http://+:$PORT
 EOF
