@@ -1,4 +1,1 @@
 #!/usr/bin/env bash
-cat <<EOF > Procfile
-    web: app/vendor/aspwebapp/approot/web --server.urls http://+:$PORT
-EOF
