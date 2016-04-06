@@ -151,7 +151,12 @@ mkdir -p ${DNX_BUILD_LOCATION}
 DNX_VERSION=$(dnvm alias default)
 cp -r ~/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
 DNX_RUNTIME_PATH="$DNX_BUILD_LOCATION/$DNX_VERSION/bin"
-export PATH="$DNX_RUNTIME_PATH:$PATH"
+
+cat <<EOF >$DEPLOYMENT_PATH/approot/web
+echo "DNX VERSION"
+$DNX_RUNTIME_PATH/dnx --version
+web: $DNX_RUNTIME_PATH/dnx -p $DEPLOYMENT_PATH/project.json web "$@"
+EOF
 
 if [ -n "project.json" ]; then
    PROJECT_JSON_FILES=$(find ${DEPLOYMENT_PATH}/. -maxdepth 3 -iname "project.json")
