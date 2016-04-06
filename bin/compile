@@ -35,8 +35,7 @@ function indent() {
   esac
 }
 
-DEPLOYMENT_PATH=${HOME}/vendor/aspwebapp
-export ${DEPLOYMENT_PATH}
+export DEPLOYMENT_PATH=${HOME}/vendor/aspwebapp
 mkdir -p ${DEPLOYMENT_PATH}
 cp -r ${BUILD_DIR}/* ${DEPLOYMENT_PATH}
 cd ${DEPLOYMENT_PATH}
