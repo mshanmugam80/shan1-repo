@@ -147,6 +147,7 @@ topic "libuv installed."
 # Add DNX to the build output
 DNX_BUILD_LOCATION=${DEPLOYMENT_PATH}/.dnx/runtimes/
 mkdir -p ${DNX_BUILD_LOCATION}
+DNX_VERSION=$(dnvm alias default)
 cp -r ~/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
 
 if [ -n "project.json" ]; then
@@ -170,13 +171,13 @@ dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE} --no-cache
 
 topic "dnu publish starts."
 echo "Deploment location: $DEPLOYMENT_PATH"
-dnu publish $DNU_FLAGS --configuration Release ${PROJECT_JSON_FILE} --no-source --runtime active
+dnu publish $DNU_FLAGS --configuration Release ${PROJECT_JSON_FILE} --no-source --runtime $DNX_VERSION
 topic "dnu publish ended."
 
 topic "Profile file setting:"
-cat << EOT >> ${DEPLOYMENT_PATH}/Procfile
-default_process_types:
+cat << EOT >> Procfile
     web: ./approot/web --server.urls http://+:$PORT
 EOT
+cat Profile
 # Clean out core-stuff that we don't need in the slug
 #find ${BUILD_DIR} -iname dnxcore50 -print0 | xargs -r -0 rm --
