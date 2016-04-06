@@ -1,3 +1,8 @@
 #!/usr/bin/env bash
-APP_PATH=${HOME}/vendor/aspwebapp
-echo "App is to be started on port: $PORT"
+source compile.sh
+topic "Deployment Path: $DEPLOYMENT_PATH"
+
+topic "Profile file setting:"
+cat <<EOF > Procfile
+    web: $DEPLOYMENT_PATH/approot/web --server.urls http://+:$PORT
+EOF
