@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-BUILD_DIR=$1
-
 cat <<EOF
 ---
 EOF
