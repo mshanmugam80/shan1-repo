@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-echo "Path env : $PATH"
+default_process_types:
+  web: ./approot/web --server-urls http://+:$PORT
