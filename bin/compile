@@ -36,9 +36,9 @@ function indent() {
 }
 
 export DEPLOYMENT_PATH="${HOME}/vendor/aspwebapp"
-ls $DEPLOYMENT_PATH -l
 mkdir -p ${DEPLOYMENT_PATH}
 cp -r ${BUILD_DIR}/* ${DEPLOYMENT_PATH}
+ls $DEPLOYMENT_PATH -l
 cd ${DEPLOYMENT_PATH}
 
 if [ -n "$BUILD_DEBUG" ]; then
