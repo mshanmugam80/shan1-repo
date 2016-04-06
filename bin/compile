@@ -133,6 +133,12 @@ echo "DNVM to install DNX for .NET Core"
 dnvm upgrade -runtime coreclr
 echo "dnvm upgraded."
 
+topic "DNU version"
+dnu --version
+
+topic "DNX version"
+dnx --version
+
 topic "libuv install"
 curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${DEPLOYMENT_PATH}
 cd ${DEPLOYMENT_PATH}/libuv-${LIBUV_VERSION}
