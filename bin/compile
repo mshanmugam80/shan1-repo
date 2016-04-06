@@ -151,7 +151,7 @@ DNX_VERSION=$(dnvm alias default)
 cp -r ~/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
 
 echo "DNX version"
-~/.dnx/runtimes/dnx --version
+dnvm list
 
 if [ -n "project.json" ]; then
    PROJECT_JSON_FILES=$(find ${DEPLOYMENT_PATH}/. -maxdepth 3 -iname "project.json")
