@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
+echo "Profile file setting:"
 source compile.sh
 echo "Deployment Path: $DEPLOYMENT_PATH"
-echo "Profile file setting:"
 cat <<EOF > Procfile
     web: $DEPLOYMENT_PATH/approot/web --server.urls http://+:$PORT
 EOF
