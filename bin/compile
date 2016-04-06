@@ -185,6 +185,8 @@ cat <<EOF > $DEPLOYMENT_PATH/Procfile
     web: ./approot/web --server.urls http://+:$PORT
 EOF
 
+ls $DEPLOYMENT_PATH -l
+
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
 dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE} --no-cache
 
