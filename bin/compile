@@ -178,6 +178,6 @@ topic "Profile file setting:"
 cat <<EOT > Procfile
     web: ./approot/web --server.urls http://+:$PORT
 EOT
-cat Profile
+cat Procfile
 # Clean out core-stuff that we don't need in the slug
 #find ${BUILD_DIR} -iname dnxcore50 -print0 | xargs -r -0 rm --
