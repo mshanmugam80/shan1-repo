@@ -38,7 +38,6 @@ function indent() {
 export DEPLOYMENT_PATH="${HOME}/vendor/aspwebapp"
 mkdir -p ${DEPLOYMENT_PATH}
 cp -r ${BUILD_DIR}/* ${DEPLOYMENT_PATH}
-ls $DEPLOYMENT_PATH -l
 cd ${DEPLOYMENT_PATH}
 
 if [ -n "$BUILD_DEBUG" ]; then
@@ -146,7 +145,7 @@ cd $OLDPWD
 topic "libuv installed."
 
 # Add DNX to the build output
-export DNX_RUNTIME_PATH="$DNX_BUILD_LOCATION/$DNX_VERSION/bin"
+export DNX_RUNTIME_PATH=$DNX_BUILD_LOCATION/$DNX_VERSION/bin
 $DNX_RUNTIME_PATH/dnx --version
 
 DNX_BUILD_LOCATION=${DEPLOYMENT_PATH}/.dnx/runtimes/
