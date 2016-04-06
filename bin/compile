@@ -175,7 +175,7 @@ dnu publish $DNU_FLAGS --configuration Release ${PROJECT_JSON_FILE} --no-source 
 topic "dnu publish ended."
 
 topic "Profile file setting:"
-cat << EOT >> Procfile
+cat <<EOT > Procfile
     web: ./approot/web --server.urls http://+:$PORT
 EOT
 cat Profile
