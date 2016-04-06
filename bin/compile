@@ -152,6 +152,7 @@ cp -r ~/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
 
 echo "DNX version"
 ls $DNX_BUILD_LOCATION/$DNX_VERSION/bin -l
+$DNX_BUILD_LOCATION/$DNX_VERSION/bin/dnx --version
 $DEPLOYMENT_PATH/dnx --version
 
 if [ -n "project.json" ]; then
