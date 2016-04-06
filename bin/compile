@@ -173,6 +173,10 @@ echo "Deploment location: $DEPLOYMENT_PATH"
 dnu publish $DNU_FLAGS --configuration Release ${PROJECT_JSON_FILE} --no-source --runtime active
 topic "dnu publish ended."
 
-exec dnx -p ${PROJECT_JSON_FILE} web "$@"
+topic "Profile file setting:"
+cat << EOT >> ${DEPLOYMENT_PATH}/Procfile
+default_process_types:
+    web: ./approot/web --server.urls http://+:$PORT
+EOT
 # Clean out core-stuff that we don't need in the slug
 #find ${BUILD_DIR} -iname dnxcore50 -print0 | xargs -r -0 rm --
