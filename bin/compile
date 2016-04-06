@@ -160,7 +160,7 @@ web: $DNX_RUNTIME_PATH/dnx -p $DEPLOYMENT_PATH/project.json web "$@"
 EOF
 
 echo "Approot Path: $DEPLOYMENT_PATH/approot"
-ls $DEPLOYMENT_PATH/approot
+ls $DEPLOYMENT_PATH/approot -l
 
 if [ -n "project.json" ]; then
    PROJECT_JSON_FILES=$(find ${DEPLOYMENT_PATH}/. -maxdepth 3 -iname "project.json")
