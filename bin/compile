@@ -161,7 +161,7 @@ web: $DNX_RUNTIME_PATH/dnx -p $DEPLOYMENT_PATH/project.json web "$@"
 EOF
 
 echo "Approot Path: $DEPLOYMENT_PATH/approot"
-chmod -r 777 $DEPLOYMENT_PATH/approot
+chmod -R 777 $DEPLOYMENT_PATH/approot
 ls $DEPLOYMENT_PATH/approot -l
 
 if [ -n "project.json" ]; then
