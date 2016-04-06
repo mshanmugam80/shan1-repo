@@ -8,6 +8,7 @@ if [ -n ${APP_PATH}/Procfile ]; then
 	#if [ $( echo "${ROOTS}" | wc -l ) -gt 0 ]; then
 	#APP_ROOT=$(echo "$ROOTS" | head -1)
 cat << EOT >> ${APP_PATH}/Procfile
+default_process_types:
     web: ./approot/web --server.urls http://+:$PORT
 EOT
 	#fi
