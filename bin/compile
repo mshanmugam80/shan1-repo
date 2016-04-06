@@ -181,6 +181,8 @@ echo "Path : $PATH"
 cat <<EOF > $DEPLOYMENT_PATH/Procfile
     web: ./approot/web --server.urls http://+:$PORT
 EOF
+chmod 777 $DEPLOYMENT_PATH/Procfile
+
 echo "Building ${PROJECT_JSON_FILE}"
 ls $DEPLOYMENT_PATH -l
 
