@@ -178,7 +178,7 @@ echo "bootstrap file creation"
 cat <<EOF > $BUILD_DIR/bootstrap
 #!/usr/bin/env bash
 
-echo "Current path: `pwd'"
+echo "Current path: `pwd`"
 DNX_RUNTIME_PATH=`which dnx`
 echo "root dnx location: $DNX_RUNTIME_PATH"
 ls /app/ -l -h
