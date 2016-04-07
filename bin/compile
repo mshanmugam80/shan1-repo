@@ -178,6 +178,8 @@ cat <<EOF > $BUILD_DIR/bootstrap
 #!/usr/bin/env bash
 
 echo "$PROJECT_JSON_FILE"
+echo "$DNX_RUNTIME_PATH"
+ls $DNX_RUNTIME_PATH -l
 $DNX_RUNTIME_PATH/dnx --version
 $DNX_RUNTIME_PATH/dnx -p $PROJECT_JSON_FILE web --server-urls http://+:$PORT
 
