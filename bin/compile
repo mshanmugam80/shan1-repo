@@ -13,8 +13,6 @@ CACHE_DIR=$2
 ENV_DIR=$3
 LD_DIR=`cd $(dirname $0); cd ..; pwd`
 
-ls $LD_DIR -l -h
-
 : ${LIBUV_VERSION:="1.8.0"}
 : ${DNVM_BRANCH:="dev"}
 : ${DNX_VERSION:="latest"}
@@ -44,6 +42,7 @@ mkdir -p ${TARGET_PATH}
 cp -r ${BUILD_DIR}/* ${COMPILE_PATH}
 cp -f ${LD_DIR}/bin/* ${COMPILE_PATH}/build_pack
 cd ${COMPILE_PATH}
+ls ${COMPILE_PATH}/build_pack/* -l
 
 if [ -n "$BUILD_DEBUG" ]; then
 	DNU_FLAGS=""
@@ -178,17 +177,18 @@ cat <<EOF > ${BUILD_DIR}/bootstrap
 uname -r
 echo "Current path: `pwd`"
 echo "app dir:"
-ls /app/* -l -h
+ls ${HOME}/* -l -h
 
-echo "app/vendror dir:"
-ls /app/vendor/* -l
+echo "app/vendor dir:"
+ls ${HOME}/vendor/* -l
 
 echo "app/vendror/aspwebapp dir:"
-ls /app/vendor/aspwebapp/* -l -h
+ls ${HOME}/vendor/aspwebapp/* -l -h
 
 #$DNX_RUNTIME_LINK
 echo "start app"
-web: $DNX_RUNTIME_LINK -p $PROJECT_JSON_FILE web --port $PORT
+$DNX_RUNTIME_LINK --version
+$DNX_RUNTIME_LINK -p $PROJECT_JSON_FILE web --port $PORT
 
 EOF
 
