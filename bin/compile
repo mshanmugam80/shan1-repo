@@ -177,14 +177,14 @@ cat <<EOF > $BUILD_DIR/bootstrap
 #!/usr/bin/env bash
 
 echo "root dnx location"
-ls /app/.dnx/runtimes/ -l
+ls /app/ -l
 echo "build dnx location"
-ls $DEPLOYMENT_PATH/.dnx/runtimes/ -l
+ls $DEPLOYMENT_PATH/ -l
 
 $DNX_RUNTIME_LINK -p $PROJECT_JSON_FILE web --port $PORT
 
 EOF
 
-echo "web: ./bootstrap" > $BUILD_DIR/Procfile
+echo "web: ./$BUILD_DIR/bootstrap" > $BUILD_DIR/Procfile
 
 chmod 777 $BUILD_DIR/bootstrap
