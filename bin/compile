@@ -37,11 +37,10 @@ function indent() {
 COMPILE_PATH="${HOME}/vendor"
 TARGET_PATH="${COMPILE_PATH}/aspwebapp"
 mkdir -p ${COMPILE_PATH}
-mkdir -p ${COMPILE_PATH}/build_pack
 mkdir -p ${TARGET_PATH}
 cp -r ${BUILD_DIR}/* ${COMPILE_PATH}
+mkdir -p ${COMPILE_PATH}/build_pack
 cp -f ${LD_DIR}/bin/* ${COMPILE_PATH}/build_pack
-cd ${COMPILE_PATH}
 ls ${COMPILE_PATH}/build_pack/* -l
 
 if [ -n "$BUILD_DEBUG" ]; then
@@ -57,7 +56,6 @@ if [ -n "$UNSTABLE_TOOLCHAIN" ]; then
 else
 	DNVM_FLAGS=""
 fi
-echo "DNVM FLAGS: ${DNVM_FLAGS}"
 
 APT_CACHE_DIR="$CACHE_DIR/apt/cache"
 APT_STATE_DIR="$CACHE_DIR/apt/state"
@@ -170,6 +168,8 @@ export LD_LIBRARY_PATH="\$HOME/libuvinstall:$LD_LIBRARY_PATH"
 cd $OLDPWD
 topic "libuv installed."
 
+chmod -R 777 ${COMPILE_PATH}/build_pack
+
 echo "bootstrap file creation"
 cat <<EOF > ${BUILD_DIR}/bootstrap
 #!/usr/bin/env bash
@@ -178,17 +178,10 @@ uname -r
 echo "Current path: `pwd`"
 echo "app dir:"
 ls ${HOME}/* -l -h
+source ./compile.sh
 
-echo "app/vendor dir:"
-ls ${HOME}/vendor/* -l
-
-echo "app/vendror/aspwebapp dir:"
-ls ${HOME}/vendor/aspwebapp/* -l -h
-
-#$DNX_RUNTIME_LINK
-echo "start app"
 $DNX_RUNTIME_LINK --version
-$DNX_RUNTIME_LINK -p $PROJECT_JSON_FILE web --port $PORT
+web: $DNX_RUNTIME_LINK -p $PROJECT_JSON_FILE web --port $PORT
 
 EOF
 
