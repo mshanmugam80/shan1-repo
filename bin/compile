@@ -174,7 +174,7 @@ dnu publish $DNU_FLAGS --configuration Release ${PROJECT_JSON_FILE} --no-source 
 topic "dnu publish ended."
 
 echo "bootstrap file creation"
-cat <<EOF > $DEPLOYMENT_PATH/bin/output/bootstrap
+cat <<EOF > $BUILD_DIR/bootstrap
 #!/usr/bin/env bash
 
 $DNX_RUNTIME_PATH/dnx --version
