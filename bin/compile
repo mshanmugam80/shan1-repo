@@ -174,7 +174,7 @@ dnu publish $DNU_FLAGS --configuration Release ${PROJECT_JSON_FILE} --no-source 
 topic "dnu publish ended."
 
 echo "bootstrap file creation"
-cat <<EOF > $BUILD_DIR/bootstrap
+cat <<EOF > $DEPLOYMENT_PATH/bootstrap
 #!/usr/bin/env bash
 
 $DNX_RUNTIME_PATH/dnx --version
@@ -182,6 +182,6 @@ $DNX_RUNTIME_PATH/dnx -p $PROJECT_JSON_FILE web --server-urls http://+:$PORT
 
 EOF
 
-echo "web: ./bootstrap" > $BUILD_DIR/Procfile
+echo "web: $DEPLOYMENT_PATH/bootstrap" > $BUILD_DIR/Procfile
 
 chmod 777 $DEPLOYMENT_PATH/bin/output/bootstrap
