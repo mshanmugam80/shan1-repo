@@ -175,8 +175,10 @@ echo "bootstrap file creation"
 cat <<EOF > $BUILD_DIR/bootstrap
 #!/usr/bin/env bash
 echo "Current path: `pwd`"
+DNXVER=`locate -b "\$DNX_VERSION"`
+echo "DNX version path: $DNXVER"
 $DNX_RUNTIME_LINK --version
-
+echo "start app"
 $DNX_RUNTIME_LINK -p $PROJECT_JSON_FILE web --port $PORT
 
 EOF
