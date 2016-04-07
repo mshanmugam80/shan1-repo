@@ -167,15 +167,18 @@ echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
 dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE} --no-cache
 
 topic "dnu publish starts."
-DNX_RUNTIME_LINK=`which dnx`
 echo "Deploment location: $DEPLOYMENT_PATH"
 dnu publish $DNU_FLAGS --configuration Release ${PROJECT_JSON_FILE} --no-source --runtime $DNX_VERSION
 topic "dnu publish ended."
+
+#set dnx path link
+DNX_RUNTIME_LINK=`which dnx`
 
 echo "bootstrap file creation"
 cat <<EOF > $BUILD_DIR/bootstrap
 #!/usr/bin/env bash
 
+echo "Current path: `pwd'"
 DNX_RUNTIME_PATH=`which dnx`
 echo "root dnx location: $DNX_RUNTIME_PATH"
 ls /app/ -l -h
