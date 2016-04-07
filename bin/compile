@@ -12,7 +12,6 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 LD_DIR=`cd $(dirname $0); cd ..; pwd`
-echo "Environment path: $ENV_DIR"
 
 : ${LIBUV_VERSION:="1.8.0"}
 : ${DNVM_BRANCH:="dev"}
@@ -67,7 +66,7 @@ topic "Updating apt caches"
 #apt-get $APT_OPTIONS update | indent
 
 # Install DNVM
-touch ~/.profile
+#touch ~/.profile
 curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ~/.dnx/dnvm/dnvm.sh
 dnvm
 
@@ -177,6 +176,15 @@ cat <<EOF > $BUILD_DIR/bootstrap
 
 uname -r
 echo "Current path: `pwd`"
+echo "app dir:"
+ls /app/* -l -h
+
+echo "app/vendror dir:"
+ls /app/vendor/* -l
+
+echo "app/vendror/aspwebapp dir:"
+ls /app/vendor/aspwebapp/* -l -h
+
 #$DNX_RUNTIME_LINK
 echo "start app"
 $DNX_RUNTIME_LINK -p $PROJECT_JSON_FILE web --port $PORT
