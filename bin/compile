@@ -176,13 +176,9 @@ topic "dnu publish ended."
 echo "bootstrap file creation"
 cat <<EOF > $BUILD_DIR/bootstrap
 #!/usr/bin/env bash
-echo "dnx location"
-find $HOME/ -type f -print | xargs grep -li "$DNX_VERSION"
 
-echo "$PROJECT_JSON_FILE"
-echo "$DNX_RUNTIME_PATH"
-ls $DNX_RUNTIME_PATH -l
-$DNX_RUNTIME_PATH/dnx --version
+echo "dnx location"
+find . -type f -print | xargs grep -li "$DNX_VERSION"
 $DNX_RUNTIME_PATH/dnx -p $PROJECT_JSON_FILE web --server-urls http://+:$PORT
 
 EOF
