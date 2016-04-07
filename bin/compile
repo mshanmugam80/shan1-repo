@@ -173,10 +173,16 @@ echo "Deploment location: $DEPLOYMENT_PATH"
 dnu publish $DNU_FLAGS --configuration Release ${PROJECT_JSON_FILE} --no-source --runtime $DNX_VERSION
 topic "dnu publish ended."
 
+bootstrap=$("$DEPLOYMENT_PATH" "bootstrap");
+echo "bootstrap path : $bootstrap"
+cat <<EOF > $bootstrap
+#!/usr/bin/env bash
 
-if [ -d $DEPLOYMENT_PATH/approot ]; then
-    cat <<EOF
-default_process_types:
-    web: ./approot/web --server-urls http://+:$PORT
+$DNX_RUNTIME_PATH/dnx --version
+$DNX_RUNTIME_PATH/dnx -p $PROJECT_JSON_FILE web --server-urls http://+:$PORT
+
 EOF
-fi
+
+echo "web: sh ./bootstrap" > $DEPLOYMENT_PATH/Procfile
+
+chmod 777 $bootstrap
