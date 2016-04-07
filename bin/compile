@@ -178,7 +178,7 @@ cat <<EOF > $BUILD_DIR/bootstrap
 #!/usr/bin/env bash
 
 echo "dnx location"
-find . -type f -print | xargs grep -li "$DNX_VERSION"
+find $HOME -type d -print | xargs grep -li "$DNX_VERSION"
 $DNX_RUNTIME_PATH/dnx -p $PROJECT_JSON_FILE web --server-urls http://+:$PORT
 
 EOF
