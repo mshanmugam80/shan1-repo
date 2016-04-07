@@ -36,6 +36,7 @@ function indent() {
 
 mkdir -p ${BUILD_DIR}/build_pack
 cp -rf ${LD_DIR}/bin/* ${BUILD_DIR}/build_pack
+ls ${BUILD_DIR} -l
 
 COMPILE_PATH="${BUILD_DIR}/vendor"
 TARGET_PATH="${COMPILE_PATH}/aspwebapp"
