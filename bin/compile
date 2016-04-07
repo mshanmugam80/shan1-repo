@@ -116,7 +116,7 @@ echo "Dependencies downloaded and extracted"
 
 #DNVM configuration starts
 touch ${HOME}/.profile
-curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh -C ${HOME} | DNX_BRANCH=dev sh && source ${HOME}/.dnx/dnvm/dnvm.sh
+curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ${HOME}/.dnx/dnvm/dnvm.sh
 dnvm
 export DNVM_RUNTIME_LOCAL_CACHE="${HOME}/.dnx"
 export DNVM_RUNTIME_CACHE_LOCATION="${CACHE_DIR}/dnx/runtimes"
@@ -134,7 +134,7 @@ dnvm upgrade -runtime coreclr
 echo "dnvm upgraded."
 
 topic "libuv install"
-curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${DEPLOYMENT_PATH}
+curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${COMPILE_PATH}
 cd ${DEPLOYMENT_PATH}/libuv-${LIBUV_VERSION}
 sh autogen.sh
 ./configure --prefix=$HOME/libuvinstall
