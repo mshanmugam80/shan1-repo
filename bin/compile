@@ -182,6 +182,6 @@ $DNX_RUNTIME_PATH/dnx -p $PROJECT_JSON_FILE web --server-urls http://+:$PORT
 
 EOF
 
-echo "web: bootstrap" > $DEPLOYMENT_PATH/bin/output/Procfile
+echo "web: ./bootstrap" > $BUILD_DIR/Procfile
 
 chmod 777 $DEPLOYMENT_PATH/bin/output/bootstrap
