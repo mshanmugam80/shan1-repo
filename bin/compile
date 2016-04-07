@@ -153,21 +153,6 @@ PROJECT_JSON_FILES=$(find ${BUILD_DIR}/. -maxdepth 3 -iname "project.json")
 printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
 PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 
-echo "dnvm runtimes"
-dnvm list
-
-#libuv configuration
-topic "libuv install"
-curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${COMPILE_PATH}
-cd ${COMPILE_PATH}/libuv-${LIBUV_VERSION}
-sh autogen.sh
-./configure --prefix=$HOME/libuvinstall
-make
-make install
-export LD_LIBRARY_PATH="\$HOME/libuvinstall:$LD_LIBRARY_PATH"
-cd $OLDPWD
-topic "libuv installed."
-
 echo "bootstrap file creation"
 cat <<EOF > ${BUILD_DIR}/bootstrap
 #!/usr/bin/env bash
@@ -186,6 +171,25 @@ echo "Procfile setting:-"
 echo "web: ./bootstrap" > ${BUILD_DIR}/Procfile
 #echo "web: $DNX_RUNTIME_LINK p- $PROJECT_JSON_FILE web --server-urls http://*:$PORT" > $BUILD_DIR/Procfile
 chmod 777 ${BUILD_DIR}/bootstrap
+
+#Copy source code
+cp -rf ${BUILD_DIR}/* ${COMPILE_PATH}/
+ls ${COMPILE_PATH}/ -l
+
+echo "dnvm runtimes"
+dnvm list
+
+#libuv configuration
+topic "libuv install"
+curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${COMPILE_PATH}
+cd ${COMPILE_PATH}/libuv-${LIBUV_VERSION}
+sh autogen.sh
+./configure --prefix=$HOME/libuvinstall
+make
+make install
+export LD_LIBRARY_PATH="\$HOME/libuvinstall:$LD_LIBRARY_PATH"
+cd $OLDPWD
+topic "libuv installed."
 
 #DNU restore using project.json
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
