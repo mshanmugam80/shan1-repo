@@ -34,14 +34,13 @@ function indent() {
   esac
 }
 
-COMPILE_PATH="${HOME}/vendor"
+mkdir -p ${BUILD_DIR}/build_pack
+cp -rf ${LD_DIR}/bin/* ${BUILD_DIR}/build_pack
+
+COMPILE_PATH="${BUILD_DIR}/vendor"
 TARGET_PATH="${COMPILE_PATH}/aspwebapp"
 mkdir -p ${COMPILE_PATH}
 mkdir -p ${TARGET_PATH}
-cp -r ${BUILD_DIR}/* ${COMPILE_PATH}
-mkdir -p ${COMPILE_PATH}/build_pack
-cp -f ${LD_DIR}/bin/* ${COMPILE_PATH}/build_pack
-ls ${COMPILE_PATH}/build_pack/* -l
 
 if [ -n "$BUILD_DEBUG" ]; then
 	DNU_FLAGS=""
@@ -168,17 +167,14 @@ export LD_LIBRARY_PATH="\$HOME/libuvinstall:$LD_LIBRARY_PATH"
 cd $OLDPWD
 topic "libuv installed."
 
-chmod -R 777 ${COMPILE_PATH}/build_pack
-
 echo "bootstrap file creation"
-cat <<EOF > ${BUILD_DIR}/bootstrap
+cat <<EOF > ${COMPILE_PATH}/bootstrap
 #!/usr/bin/env bash
 
 uname -r
 echo "Current path: `pwd`"
 echo "app dir:"
 ls ${HOME}/* -l -h
-source ./compile.sh
 
 $DNX_RUNTIME_LINK --version
 web: $DNX_RUNTIME_LINK -p $PROJECT_JSON_FILE web --port $PORT
@@ -186,9 +182,9 @@ web: $DNX_RUNTIME_LINK -p $PROJECT_JSON_FILE web --port $PORT
 EOF
 
 echo "Procfile setting:-"
-echo "web: ./bootstrap" > ${BUILD_DIR}/Procfile
+echo "web: ./bootstrap" > ${COMPILE_PATH}/Procfile
 #echo "web: $DNX_RUNTIME_LINK p- $PROJECT_JSON_FILE web --server-urls http://*:$PORT" > $BUILD_DIR/Procfile
-chmod 777 ${BUILD_DIR}/bootstrap
+chmod 777 ${COMPILE_PATH}/bootstrap
 
 #DNU restore using project.json
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
