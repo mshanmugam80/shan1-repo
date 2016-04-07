@@ -37,8 +37,10 @@ function indent() {
 }
 
 COMPILE_PATH="${HOME}/vendor"
+TARGET_PATH="${COMPILE_PATH}/aspwebapp"
 mkdir -p ${COMPILE_PATH}
 mkdir -p ${COMPILE_PATH}/build_pack
+mkdir -p ${TARGET_PATH}
 cp -r ${BUILD_DIR}/* ${COMPILE_PATH}
 cp -f ${LD_DIR}/bin/* ${COMPILE_PATH}/build_pack
 cd ${COMPILE_PATH}
@@ -122,8 +124,8 @@ export DNVM_RUNTIME_LOCAL_CACHE="${HOME}/.dnx"
 export DNVM_RUNTIME_CACHE_LOCATION="${CACHE_DIR}/dnx/runtimes"
 mkdir -p ${DNVM_RUNTIME_LOCAL_CACHE}
 mkdir -p ${DNVM_RUNTIME_CACHE_LOCATION}
-ln -s ${DNVM_RUNTIME_CACHE_LOCATION} ${DNVM_RUNTIME_LOCAL_CACHE}/runtimes
 export PATH="$DNVM_RUNTIME_LOCAL_CACHE:$DNVM_RUNTIME_CACHE_LOCATION:$PATH"
+ln -s ${DNVM_RUNTIME_CACHE_LOCATION} ${DNVM_RUNTIME_LOCAL_CACHE}/runtimes
 
 echo "dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default"
 dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default
@@ -133,49 +135,44 @@ echo "DNVM to install DNX for .NET Core"
 dnvm upgrade -runtime coreclr
 echo "dnvm upgraded."
 
-topic "libuv install"
-curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${COMPILE_PATH}
-#cd ${DEPLOYMENT_PATH}/libuv-${LIBUV_VERSION}
-#sh autogen.sh
-#./configure --prefix=$HOME/libuvinstall
-#make
-#make install
-#export LD_LIBRARY_PATH="\$HOME/libuvinstall:$LD_LIBRARY_PATH"
-#cd $OLDPWD
-#topic "libuv installed."
-
-# Add DNX to the build output
-DNX_RUNTIME_LINK=`which dnx`
-export PATH="$DNX_RUNTIME_LINK:$DNX_BUILD_LOCATION:$PATH"
-export DNX_BUILD_LOCATION=${DEPLOYMENT_PATH}/.dnx/runtimes/
+#DNX setting
+export DNX_BUILD_LOCATION=${COMPILE_PATH}/.dnx/runtimes/
 mkdir -p ${DNX_BUILD_LOCATION}
 DNX_VERSION=$(dnvm alias default)
 cp -r ${HOME}/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
+DNX_RUNTIME_LINK=`which dnx`
+export PATH="$DNX_RUNTIME_LINK:$DNX_BUILD_LOCATION:$PATH"
 
-PROJECT_JSON_FILES=$(find ${DEPLOYMENT_PATH}/. -maxdepth 3 -iname "project.json")
-printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
-PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
-
-export DNU_LOCAL_CACHE="/app/.local/share/dnu"
+#DNU cache setting
+export DNU_LOCAL_CACHE="${HOME}/.local/share/dnu"
 export DNU_CACHE_LOCATION="${CACHE_DIR}/dnu/cache"
 mkdir -p ${DNU_LOCAL_CACHE}
 mkdir -p ${DNU_CACHE_LOCATION}
 ln -s ${DNU_CACHE_LOCATION} ${DNU_LOCAL_CACHE}/cache 
 export PATH="$DNU_LOCAL_CACHE:$DNU_CACHE_LOCATION:$PATH"
 
+#Find project.json
+PROJECT_JSON_FILES=$(find ${COMPILE_PATH}/. -maxdepth 3 -iname "project.json")
+printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
+PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
+
 echo "dnvm runtimes"
 dnvm list
 
-echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
-dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE} --no-cache
-
-topic "dnu publish starts."
-echo "Deploment location: $COMPILE_PATH"
-dnu publish $DNU_FLAGS --configuration Release ${PROJECT_JSON_FILE} --no-source --runtime $DNX_VERSION
-topic "dnu publish ended."
+#libuv configuration
+topic "libuv install"
+curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${COMPILE_PATH}
+cd ${COMPILE_PATH}/libuv-${LIBUV_VERSION}
+sh autogen.sh
+./configure --prefix=$HOME/libuvinstall
+make
+make install
+export LD_LIBRARY_PATH="\$HOME/libuvinstall:$LD_LIBRARY_PATH"
+cd $OLDPWD
+topic "libuv installed."
 
 echo "bootstrap file creation"
-cat <<EOF > $BUILD_DIR/bootstrap
+cat <<EOF > ${BUILD_DIR}/bootstrap
 #!/usr/bin/env bash
 
 uname -r
@@ -191,11 +188,21 @@ ls /app/vendor/aspwebapp/* -l -h
 
 #$DNX_RUNTIME_LINK
 echo "start app"
-$DNX_RUNTIME_LINK -p $PROJECT_JSON_FILE web --port $PORT
+web: $DNX_RUNTIME_LINK -p $PROJECT_JSON_FILE web --port $PORT
 
 EOF
 
 echo "Procfile setting:-"
-echo "web: ./bootstrap" > $BUILD_DIR/Procfile
+echo "web: ./bootstrap" > ${BUILD_DIR}/Procfile
 #echo "web: $DNX_RUNTIME_LINK p- $PROJECT_JSON_FILE web --server-urls http://*:$PORT" > $BUILD_DIR/Procfile
-chmod 777 $BUILD_DIR/bootstrap
+chmod 777 ${BUILD_DIR}/bootstrap
+
+#DNU restore using project.json
+echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
+dnu restore ${DNU_FLAGS} ${PROJECT_JSON_FILE} --no-cache
+
+#DNU pulish using project.json
+topic "dnu publish starts."
+echo "Deploment location: $COMPILE_PATH"
+dnu publish --out ${TARGET_PATH} ${DNU_FLAGS} --configuration Release ${PROJECT_JSON_FILE} --no-source --runtime ${DNX_VERSION}
+topic "dnu publish ended."
