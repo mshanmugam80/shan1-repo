@@ -177,9 +177,9 @@ cat <<EOF > $BUILD_DIR/bootstrap
 #!/usr/bin/env bash
 
 echo "root dnx location"
-ls /app/ -l
+ls /app/ -l -h
 echo "build dnx location"
-ls $DEPLOYMENT_PATH/ -l
+ls $DEPLOYMENT_PATH -l -h
 
 $DNX_RUNTIME_LINK -p $PROJECT_JSON_FILE web --port $PORT
 
