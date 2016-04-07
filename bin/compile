@@ -68,8 +68,8 @@ topic "Updating apt caches"
 # Install DNVM
 touch ~/.profile
 curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ~/.dnx/dnvm/dnvm.sh
-which dnvm
 dnvm
+which dnvm
 
 for PACKAGE in $(cat $DEPLOYMENT_PATH/Aptfile); do
   if [[ $PACKAGE == *deb ]]; then
