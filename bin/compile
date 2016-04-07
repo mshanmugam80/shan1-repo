@@ -181,5 +181,6 @@ topic "dnu publish ended."
 #EOF
 
 echo "Procfile setting:-"
+#echo "web: ./bootstrap" > $BUILD_DIR/Procfile
 echo "web: $DNX_RUNTIME_LINK p- $PROJECT_JSON_FILE web --server-urls http://*:$PORT" > $BUILD_DIR/Procfile
-chmod 777 $BUILD_DIR/bootstrap
+#chmod 777 $BUILD_DIR/bootstrap
