@@ -171,22 +171,11 @@ echo "Deploment location: $DEPLOYMENT_PATH"
 dnu publish $DNU_FLAGS --configuration Release ${PROJECT_JSON_FILE} --no-source --runtime $DNX_VERSION
 topic "dnu publish ended."
 
-#set dnx path link
-echo "Path : $PATH"
-ls /app/* -l -h
-
 echo "bootstrap file creation"
 cat <<EOF > $BUILD_DIR/bootstrap
 #!/usr/bin/env bash
 echo "Current path: `pwd`"
-echo "Path : $PATH"
-ls /app/* -l -h
-
-DNX_RUNTIME_PATH=`which dnx`
-echo "root dnx location: $DNX_RUNTIME_PATH"
-ls /app/ -l -h
-echo "build dnx location"
-ls $DEPLOYMENT_PATH -l -h
+$DNX_RUNTIME_LINK --version
 
 $DNX_RUNTIME_LINK -p $PROJECT_JSON_FILE web --port $PORT
 
