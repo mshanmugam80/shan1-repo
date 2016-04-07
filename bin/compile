@@ -173,9 +173,8 @@ echo "Deploment location: $DEPLOYMENT_PATH"
 dnu publish $DNU_FLAGS --configuration Release ${PROJECT_JSON_FILE} --no-source --runtime $DNX_VERSION
 topic "dnu publish ended."
 
-bootstrap=$("$DEPLOYMENT_PATH" "bootstrap");
-echo "bootstrap path : $bootstrap"
-cat <<EOF > $bootstrap
+echo "bootstrap file creation"
+cat <<EOF > $DEPLOYMENT_PATH/bootstrap
 #!/usr/bin/env bash
 
 $DNX_RUNTIME_PATH/dnx --version
