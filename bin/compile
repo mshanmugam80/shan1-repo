@@ -69,7 +69,7 @@ topic "Updating apt caches"
 touch ~/.profile
 curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ~/.dnx/dnvm/dnvm.sh
 dnvm
-which dnvm
+echo "`which dnvm`"
 
 for PACKAGE in $(cat $DEPLOYMENT_PATH/Aptfile); do
   if [[ $PACKAGE == *deb ]]; then
