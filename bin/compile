@@ -185,6 +185,6 @@ $DNX_RUNTIME_LINK -p $PROJECT_JSON_FILE web --port $PORT
 
 EOF
 
-echo "web: ./$BUILD_DIR/bootstrap" > $BUILD_DIR/Procfile
+echo "web: ./bootstrap" > $BUILD_DIR/Procfile
 
 chmod 777 $BUILD_DIR/bootstrap
