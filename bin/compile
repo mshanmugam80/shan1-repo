@@ -40,7 +40,7 @@ COMPILE_PATH="${HOME}/vendor"
 mkdir -p ${COMPILE_PATH}
 mkdir -p ${COMPILE_PATH}/build_pack
 cp -r ${BUILD_DIR}/* ${COMPILE_PATH}
-cp -f ${LD_DIR}/bin/*.* ${COMPILE_PATH}/build_pack
+cp -f ${LD_DIR}/bin/* ${COMPILE_PATH}/build_pack
 cd ${COMPILE_PATH}
 
 if [ -n "$BUILD_DEBUG" ]; then
