@@ -148,7 +148,7 @@ ln -s ${DNU_CACHE_LOCATION} ${DNU_LOCAL_CACHE}/cache
 export PATH="$DNU_LOCAL_CACHE:$DNU_CACHE_LOCATION:$PATH"
 
 #Find project.json
-PROJECT_JSON_FILES=$(find ${COMPILE_PATH}/. -maxdepth 3 -iname "project.json")
+PROJECT_JSON_FILES=$(find ${BUILD_DIR}/. -maxdepth 3 -iname "project.json")
 printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
 PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 
@@ -168,7 +168,7 @@ cd $OLDPWD
 topic "libuv installed."
 
 echo "bootstrap file creation"
-cat <<EOF > ${COMPILE_PATH}/bootstrap
+cat <<EOF > ${BUILD_DIR}/bootstrap
 #!/usr/bin/env bash
 
 uname -r
@@ -182,9 +182,9 @@ web: $DNX_RUNTIME_LINK -p $PROJECT_JSON_FILE web --port $PORT
 EOF
 
 echo "Procfile setting:-"
-echo "web: ./bootstrap" > ${COMPILE_PATH}/Procfile
+echo "web: ./bootstrap" > ${BUILD_DIR}/Procfile
 #echo "web: $DNX_RUNTIME_LINK p- $PROJECT_JSON_FILE web --server-urls http://*:$PORT" > $BUILD_DIR/Procfile
-chmod 777 ${COMPILE_PATH}/bootstrap
+chmod 777 ${BUILD_DIR}/bootstrap
 
 #DNU restore using project.json
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
