@@ -34,14 +34,22 @@ function indent() {
   esac
 }
 
-mkdir -p ${BUILD_DIR}/build_pack
-cp -rf ${LD_DIR}/bin/* ${BUILD_DIR}/build_pack
-ls ${BUILD_DIR} -l
-
-COMPILE_PATH="${BUILD_DIR}/vendor"
-TARGET_PATH="${COMPILE_PATH}/aspwebapp"
+COMPILE_PATH="${BUILD_DIR}/BUILDDIR"
 mkdir -p ${COMPILE_PATH}
+
+mkdir -p ${COMPILE_PATH}/build_pack
+cp -rf ${LD_DIR}/bin/* ${COMPILE_PATH}/build_pack
+
+#Move all files to build dirtory
+shopt -s dotglob
+mv ${BUILD_DIR}/* ${COMPILE_PATH}
+ls ${COMPILE_PATH} -l
+
+TARGET_PATH="${BUILD_DIR}/aspwebapp"
 mkdir -p ${TARGET_PATH}
+
+#Go to 
+cd ${COMPILE_PATH}
 
 if [ -n "$BUILD_DEBUG" ]; then
 	DNU_FLAGS=""
@@ -149,12 +157,12 @@ ln -s ${DNU_CACHE_LOCATION} ${DNU_LOCAL_CACHE}/cache
 export PATH="$DNU_LOCAL_CACHE:$DNU_CACHE_LOCATION:$PATH"
 
 #Find project.json
-PROJECT_JSON_FILES=$(find ${BUILD_DIR}/. -maxdepth 3 -iname "project.json")
+PROJECT_JSON_FILES=$(find ${COMPILE_PATH}/. -maxdepth 3 -iname "project.json")
 printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
 PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 
 echo "bootstrap file creation"
-cat <<EOF > ${BUILD_DIR}/bootstrap
+cat <<EOF > ${COMPILE_PATH}/bootstrap
 #!/usr/bin/env bash
 
 uname -r
@@ -168,9 +176,9 @@ web: $DNX_RUNTIME_LINK -p $PROJECT_JSON_FILE web --port $PORT
 EOF
 
 echo "Procfile setting:-"
-echo "web: ./bootstrap" > ${BUILD_DIR}/Procfile
+echo "web: ./bootstrap" > ${COMPILE_PATH}/Procfile
 #echo "web: $DNX_RUNTIME_LINK p- $PROJECT_JSON_FILE web --server-urls http://*:$PORT" > $BUILD_DIR/Procfile
-chmod 777 ${BUILD_DIR}/bootstrap
+chmod 777 ${COMPILE_PATH}/bootstrap
 
 echo "dnvm runtimes"
 dnvm list
@@ -184,7 +192,7 @@ sh autogen.sh
 make
 make install
 export LD_LIBRARY_PATH="\$HOME/libuvinstall:$LD_LIBRARY_PATH"
-cd $OLDPWD
+cd ${COMPILE_PATH}
 topic "libuv installed."
 
 #DNU restore using project.json
@@ -196,3 +204,5 @@ topic "dnu publish starts."
 echo "Deploment location: $COMPILE_PATH"
 dnu publish --out ${TARGET_PATH} ${DNU_FLAGS} --configuration Release ${PROJECT_JSON_FILE} --no-source --runtime ${DNX_VERSION}
 topic "dnu publish ended."
+
+cd ${HOME}
