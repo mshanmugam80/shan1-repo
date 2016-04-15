@@ -3,7 +3,6 @@
 
 # fail fast
 set -e
-DNVM_PATH="https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.sh"
 
 if [ $STACK != "cedar-14" ]; then
 	echo "Stack ${STACK} not supported" && exit 1
@@ -12,29 +11,6 @@ fi
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
-
-: ${LIBUV_VERSION:="1.8.0"}
-: ${DNVM_BRANCH:="dev"}
-: ${DNX_VERSION:="latest"}
-
-function conditional_download() {
-  DOWNLOAD_URL="$1"
-  DESTINATION="$2"
-
-  if [ ! -d ${DESTINATION} ]; then
-    rm -rf ${DESTINATION}
-    mkdir -p ${DESTINATION}
-    echo "-----> Downloading ${DOWNLOAD_URL}"
-    curl ${DOWNLOAD_URL} -C ${DESTINATION}
-  fi
-}
-
-LD_DIR=`cd $(dirname $0); cd ..; pwd`
-cd ${BUILD_DIR}
-mkdir -p ${CACHE_DIR}
-
-DNVM_CACHE_LOCATION=${CACHE_DIR}/$STACK/dnvm
-conditional_download ${DNVM_PATH} ${DNVM_CACHE_LOCATION}
 
 function error() {
   echo " !     $*" >&2
@@ -52,6 +28,41 @@ function indent() {
     *)      sed -u "$c";;
   esac
 }
+
+function export_env_dir() {
+  local env_dir=$1
+  local whitelist_regex=${2:-'(DNX_VERSION|LIBUV_VERSION|NODE_VERSION|PROJECT|BUILD_DEBUG|DNVM_BRANCH|DNX_VERSION)$'}
+  local blacklist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$'}
+  if [ -d "$env_dir" ]; then
+    for e in $(ls $env_dir); do
+      echo "$e" | grep -E "$whitelist_regex" | grep -qvE "$blacklist_regex" &&
+      export "$e=$(cat $env_dir/$e)"
+      :
+    done
+  fi
+}
+
+: ${LIBUV_VERSION:="1.8.0"}
+: ${DNVM_BRANCH:="dev"}
+: ${DNX_VERSION:="latest"}
+
+LD_DIR=`cd $(dirname $0); cd ..; pwd`
+export_env_dir ${ENV_DIR}
+
+cd ${BUILD_DIR}
+
+SRC_DIR=`mktemp -d`
+# Move the app source code into temporary src dir using subshell to not leak shopt
+(
+    shopt -s dotglob
+    mv ${BUILD_DIR}/* ${SRC_DIR}
+)
+
+#Create Cache Directory
+mkdir -p ${CACHE_DIR}
+
+echo "SRC FILES"
+${SRC_DIR} -l
 
 COMPILE_PATH="${BUILD_DIR}/BUILDDIR"
 mkdir -p ${COMPILE_PATH}
@@ -141,8 +152,8 @@ export | grep -E -e ' (PATH|LD_LIBRARY_PATH|LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPP
 echo "Dependencies downloaded and extracted"
 
 #DNVM configuration starts
-touch ${HOME}/.profile
-curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ${HOME}/.dnx/dnvm/dnvm.sh
+touch ${DNVM_CACHE_LOCATION}/.profile
+curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ${DNVM_CACHE_LOCATION}/.dnx/dnvm/dnvm.sh
 dnvm
 export DNVM_RUNTIME_LOCAL_CACHE="${HOME}/.dnx"
 export DNVM_RUNTIME_CACHE_LOCATION="${CACHE_DIR}/dnx/runtimes"
