@@ -59,24 +59,19 @@ SRC_DIR=`mktemp -d`
 #Create Cache Directory
 mkdir -p ${CACHE_DIR}
 
-echo "SRC FILES"
+topic "SRC FILES"
 ls ${SRC_DIR} -l
 
-COMPILE_PATH="${BUILD_DIR}/BUILDDIR"
-mkdir -p ${COMPILE_PATH}
+topic "Build Dir Path: ${SRC_DIR}"
+COMPILE_PATH=${SRC_DIR}
 
 mkdir -p ${COMPILE_PATH}/build_pack
 cp -rf ${LD_DIR}/bin/* ${COMPILE_PATH}/build_pack
 
-#Move all files to build dirtory
-shopt -s dotglob
-mv ${BUILD_DIR}/* ${COMPILE_PATH}
-ls ${COMPILE_PATH} -l
-
 TARGET_PATH="${BUILD_DIR}/aspwebapp"
 mkdir -p ${TARGET_PATH}
 
-#Go to 
+echo "Compile Location: ${COMPILE_PATH}"
 cd ${COMPILE_PATH}
 
 if [ -n "$BUILD_DEBUG" ]; then
