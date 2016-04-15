@@ -60,7 +60,7 @@ SRC_DIR=`mktemp -d`
 mkdir -p ${CACHE_DIR}
 
 echo "SRC FILES"
-${SRC_DIR} -l
+ls ${SRC_DIR} -l
 
 COMPILE_PATH="${BUILD_DIR}/BUILDDIR"
 mkdir -p ${COMPILE_PATH}
