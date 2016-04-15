@@ -49,8 +49,6 @@ function export_env_dir() {
 LD_DIR=`cd $(dirname $0); cd ..; pwd`
 export_env_dir ${ENV_DIR}
 
-cd ${BUILD_DIR}
-
 SRC_DIR=`mktemp -d`
 # Move the app source code into temporary src dir using subshell to not leak shopt
 (
