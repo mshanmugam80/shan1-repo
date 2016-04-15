@@ -172,10 +172,6 @@ echo "web: ./bootstrap" > ${BUILD_DIR}/Procfile
 #echo "web: $DNX_RUNTIME_LINK p- $PROJECT_JSON_FILE web --server-urls http://*:$PORT" > $BUILD_DIR/Procfile
 chmod 777 ${BUILD_DIR}/bootstrap
 
-#Copy source code
-cp -rf ${BUILD_DIR}/* ${COMPILE_PATH}/
-ls ${COMPILE_PATH}/ -l
-
 echo "dnvm runtimes"
 dnvm list
 
