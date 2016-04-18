@@ -168,9 +168,16 @@ mkdir -p ${DNVM_RUNTIME_CACHE_LOCATION}
 export PATH="$DNVM_RUNTIME_LOCAL_CACHE:$DNVM_RUNTIME_CACHE_LOCATION:$PATH"
 ln -s ${DNVM_RUNTIME_CACHE_LOCATION} ${DNVM_RUNTIME_LOCAL_CACHE}/runtimes
 
+mkdir -p ${TARGET_PATH}/.dnx
+cp -r ${HOME}/.dnx/* ${TARGET_PATH}/.dnx
+export DNVM_RUNTIME_TARGET_CACHE="${TARGET_PATH}/.dnx"
+mkdir -p ${DNVM_RUNTIME_TARGET_CACHE}
+export PATH="$DNVM_RUNTIME_TARGET_CACHE:$PATH"
+ln -s ${DNVM_RUNTIME_CACHE_LOCATION} ${DNVM_RUNTIME_TARGET_CACHE}/runtimes
+
 echo "dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default"
+ls ${DNVM_RUNTIME_TARGET_CACHE}/.dnx/* -l
 dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default
-ls ${HOME}/.dnx/* -l
 echo "dnvm installed."
 
 #echo "DNVM to install DNX for .NET Core"
