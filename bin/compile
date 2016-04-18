@@ -126,14 +126,15 @@ echo "Dependencies downloaded and extracted"
 
 #DNVM configuration starts
 touch ${HOME}/.profile
-curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ${HOME}/.dnx/dnvm/dnvm.sh
-dnvm
-
 echo "Cache Dir: ${CACHE_DIR}"
 export DNVM_RUNTIME_LOCAL_CACHE="${HOME}/.dnx"
 export DNVM_RUNTIME_CACHE_LOCATION="${CACHE_DIR}/dnx/runtimes"
 mkdir -p ${DNVM_RUNTIME_LOCAL_CACHE}
 mkdir -p ${DNVM_RUNTIME_CACHE_LOCATION}
+
+curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ${HOME}/.dnx/dnvm/dnvm.sh
+dnvm
+
 export PATH="$DNVM_RUNTIME_LOCAL_CACHE:$DNVM_RUNTIME_CACHE_LOCATION:$PATH"
 ln -s ${DNVM_RUNTIME_CACHE_LOCATION} ${DNVM_RUNTIME_LOCAL_CACHE}/runtimes
 
