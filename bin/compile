@@ -240,6 +240,7 @@ export LD_LIBRARY_PATH="\$HOME/libuvinstall:$LD_LIBRARY_PATH"
 cd ${COMPILE_PATH}
 topic "libuv installed."
 
+cat ${PROJECT_JSON_FILE} > ${BUILD_DIR}/project.json
 #DNU restore using project.json
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
 dnu restore ${DNU_FLAGS} ${PROJECT_JSON_FILE} --no-cache
@@ -248,7 +249,3 @@ dnu restore ${DNU_FLAGS} ${PROJECT_JSON_FILE} --no-cache
 topic "dnu publish starts."
 dnu publish --out ${BUILD_DIR} ${DNU_FLAGS} --configuration Release ${PROJECT_JSON_FILE} --no-source --runtime ${DNX_VERSION}
 topic "dnu publish ended."
-
-cat ${PROJECT_JSON_FILE} > ${BUILD_DIR}/project.json
-${BUILD_DIR}/dnvmsetup
-echo $PATH
