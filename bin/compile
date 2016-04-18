@@ -162,7 +162,7 @@ touch ${HOME}/.profile
 curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ${HOME}/.dnx/dnvm/dnvm.sh
 dnvm
 
-cat ${HOME}/.profile
+cat ${HOME}/.profile > ${BUILD_DIR}/.profile
 export DNVM_RUNTIME_LOCAL_CACHE="${HOME}/.dnx"
 export DNVM_RUNTIME_CACHE_LOCATION="${CACHE_DIR}/dnx/runtimes"
 mkdir -p ${DNVM_RUNTIME_LOCAL_CACHE}
@@ -171,12 +171,10 @@ export PATH="$DNVM_RUNTIME_LOCAL_CACHE:$DNVM_RUNTIME_CACHE_LOCATION:$PATH"
 ln -s ${DNVM_RUNTIME_CACHE_LOCATION} ${DNVM_RUNTIME_LOCAL_CACHE}/runtimes
 
 echo "dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default"
-ls ${HOME}/.dnx/ -l
 dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default
-mkdir -p ${TARGET_PATH}/.dnx
-cp -r ${HOME}/.dnx/* ${TARGET_PATH}/.dnx
-export DNVM_RUNTIME_TARGET_CACHE="${TARGET_PATH}/.dnx"
-mkdir -p ${DNVM_RUNTIME_TARGET_CACHE}
+mkdir -p ${BUILD_DIR}/.dnx
+cp -r ${HOME}/.dnx/* ${BUILD_DIR}/.dnx
+export DNVM_RUNTIME_TARGET_CACHE="${BUILD_DIR}/.dnx"
 export PATH="$DNVM_RUNTIME_TARGET_CACHE:$PATH"
 echo "dnvm installed."
 
