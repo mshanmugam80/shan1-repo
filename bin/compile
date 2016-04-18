@@ -63,9 +63,6 @@ mkdir -p ${CACHE_DIR}
 topic "Build Dir Path: ${SRC_DIR}"
 COMPILE_PATH=${SRC_DIR}
 
-mkdir -p ${COMPILE_PATH}/build_pack
-cp -rf ${LD_DIR}/bin/* ${COMPILE_PATH}/build_pack
-
 TARGET_PATH="${BUILD_DIR}/aspwebapp"
 mkdir -p ${TARGET_PATH}
 
@@ -109,10 +106,12 @@ for PACKAGE in $(cat $COMPILE_PATH/Aptfile); do
 done
 
 mkdir -p ${COMPILE_PATH}/.apt
+mkdir -p ${TARGET_PATH}/.apt
 
 for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
   topic "Installing $(basename $DEB)"
   dpkg -x $DEB ${COMPILE_PATH}/.apt/
+  dpkg -x $DEB ${TARGET_PATH}/.apt/
 done
 
 topic "Writing profile script"
@@ -135,6 +134,25 @@ export CPATH="$INCLUDE_PATH"
 export CPPPATH="$INCLUDE_PATH"
 export PKG_CONFIG_PATH="$COMPILE_PATH/.apt/usr/lib/x86_64-linux-gnu/pkgconfig:$COMPILE_PATH/.apt/usr/lib/i386-linux-gnu/pkgconfig:$COMPILE_PATH/.apt/usr/lib/pkgconfig:$PKG_CONFIG_PATH"
 
+mkdir -p ${TARGET_PATH}/.profile.d
+cat <<EOF >${TARGET_PATH}/.profile.d/000_apt.sh
+export PATH="\$HOME/.apt/usr/bin:\$PATH"
+export LD_LIBRARY_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu:\$HOME/.apt/usr/lib/i386-linux-gnu:\$HOME/.apt/usr/lib:\$LD_LIBRARY_PATH"
+export LIBRARY_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu:\$HOME/.apt/usr/lib/i386-linux-gnu:\$HOME/.apt/usr/lib:\$LIBRARY_PATH"
+export INCLUDE_PATH="\$HOME/.apt/usr/include:\$INCLUDE_PATH"
+export CPATH="\$INCLUDE_PATH"
+export CPPPATH="\$INCLUDE_PATH"
+export PKG_CONFIG_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu/pkgconfig:\$HOME/.apt/usr/lib/i386-linux-gnu/pkgconfig:\$HOME/.apt/usr/lib/pkgconfig:\$PKG_CONFIG_PATH"
+EOF
+
+export PATH="${TARGET_PATH}/.apt/usr/bin:$PATH"
+export LD_LIBRARY_PATH="${TARGET_PATH}/.apt/usr/lib/x86_64-linux-gnu:${TARGET_PATH}/.apt/usr/lib/i386-linux-gnu:${TARGET_PATH}/.apt/usr/lib:$LD_LIBRARY_PATH"
+export LIBRARY_PATH="${TARGET_PATH}/.apt/usr/lib/x86_64-linux-gnu:${TARGET_PATH}/.apt/usr/lib/i386-linux-gnu:${TARGET_PATH}/.apt/usr/lib:$LIBRARY_PATH"
+export INCLUDE_PATH="${TARGET_PATH}/.apt/usr/include:$INCLUDE_PATH"
+export CPATH="$INCLUDE_PATH"
+export CPPPATH="$INCLUDE_PATH"
+export PKG_CONFIG_PATH="${TARGET_PATH}/.apt/usr/lib/x86_64-linux-gnu/pkgconfig:${TARGET_PATH}/.apt/usr/lib/i386-linux-gnu/pkgconfig:${TARGET_PATH}/.apt/usr/lib/pkgconfig:$PKG_CONFIG_PATH"
+
 #give environment to later buildpacks
 export | grep -E -e ' (PATH|LD_LIBRARY_PATH|LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPPATH|PKG_CONFIG_PATH)='  > "$LD_DIR/export"
 echo "Dependencies downloaded and extracted"
@@ -152,6 +170,7 @@ ln -s ${DNVM_RUNTIME_CACHE_LOCATION} ${DNVM_RUNTIME_LOCAL_CACHE}/runtimes
 
 echo "dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default"
 dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default
+ls ${HOME}/.dnx/* -l
 echo "dnvm installed."
 
 #echo "DNVM to install DNX for .NET Core"
