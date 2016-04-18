@@ -108,11 +108,11 @@ for PACKAGE in $(cat $COMPILE_PATH/Aptfile); do
   fi
 done
 
-mkdir -p ${BUILD_DIR}/.apt
+mkdir -p ${COMPILE_PATH}/.apt
 
 for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
   topic "Installing $(basename $DEB)"
-  dpkg -x $DEB ${BUILD_DIR}/.apt/
+  dpkg -x $DEB ${COMPILE_PATH}/.apt/
 done
 
 topic "Writing profile script"
@@ -154,25 +154,25 @@ echo "dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default"
 dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default
 echo "dnvm installed."
 
-echo "DNVM to install DNX for .NET Core"
-dnvm upgrade -runtime coreclr
-echo "dnvm upgraded."
+#echo "DNVM to install DNX for .NET Core"
+#dnvm upgrade -runtime coreclr
+#echo "dnvm upgraded."
 
 #DNX setting
-export DNX_BUILD_LOCATION=${COMPILE_PATH}/.dnx/runtimes/
+export DNX_BUILD_LOCATION=${COMPILE_PATH}/.dnx/
 mkdir -p ${DNX_BUILD_LOCATION}
 DNX_VERSION=$(dnvm alias default)
-cp -r ${HOME}/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
+cp -r ${HOME}/.dnx/* ${DNX_BUILD_LOCATION}
 DNX_RUNTIME_LINK=`which dnx`
 export PATH="$DNX_RUNTIME_LINK:$DNX_BUILD_LOCATION:$PATH"
 
 #DNU cache setting
-export DNU_LOCAL_CACHE="${HOME}/.local/share/dnu"
-export DNU_CACHE_LOCATION="${CACHE_DIR}/dnu/cache"
-mkdir -p ${DNU_LOCAL_CACHE}
-mkdir -p ${DNU_CACHE_LOCATION}
-ln -s ${DNU_CACHE_LOCATION} ${DNU_LOCAL_CACHE}/cache 
-export PATH="$DNU_LOCAL_CACHE:$DNU_CACHE_LOCATION:$PATH"
+#export DNU_LOCAL_CACHE="${HOME}/.local/share/dnu"
+#export DNU_CACHE_LOCATION="${CACHE_DIR}/dnu/cache"
+#mkdir -p ${DNU_LOCAL_CACHE}
+#mkdir -p ${DNU_CACHE_LOCATION}
+#ln -s ${DNU_CACHE_LOCATION} ${DNU_LOCAL_CACHE}/cache 
+#export PATH="$DNU_LOCAL_CACHE:$DNU_CACHE_LOCATION:$PATH"
 
 #Find project.json
 PROJECT_JSON_FILES=$(find ${COMPILE_PATH}/. -maxdepth 3 -iname "project.json")
