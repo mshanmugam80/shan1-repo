@@ -166,7 +166,7 @@ echo "dnvm installation"
 cat ${HOME}/.profile > ${BUILD_DIR}/.profile
 cat <<EOF > ${BUILD_DIR}/dnvmsetup
 #!/usr/bin/env bash
-source ${HOME}/.dnx/dnvm/dnvm.sh
+source .dnx/dnvm/dnvm.sh
 dnvm
 EOF
 
