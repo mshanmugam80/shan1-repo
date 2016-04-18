@@ -29,25 +29,11 @@ function indent() {
   esac
 }
 
-function export_env_dir() {
-  local env_dir=$1
-  local whitelist_regex=${2:-'(DNX_VERSION|LIBUV_VERSION|NODE_VERSION|PROJECT|BUILD_DEBUG|DNVM_BRANCH)$'}
-  local blacklist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$'}
-  if [ -d "$env_dir" ]; then
-    for e in $(ls $env_dir); do
-      echo "$e" | grep -E "$whitelist_regex" | grep -qvE "$blacklist_regex" &&
-      export "$e=$(cat $env_dir/$e)"
-      :
-    done
-  fi
-}
-
 : ${LIBUV_VERSION:="1.8.0"}
 : ${DNVM_BRANCH:="dev"}
 : ${DNX_VERSION:="latest"}
 
 LD_DIR=`cd $(dirname $0); cd ..; pwd`
-export_env_dir ${ENV_DIR}
 
 SRC_DIR=`mktemp -d`
 # Move the app source code into temporary src dir using subshell to not leak shopt
@@ -58,9 +44,6 @@ SRC_DIR=`mktemp -d`
 
 #Create Cache Directory
 mkdir -p ${CACHE_DIR}
-
-topic "SRC FILES"
-ls ${SRC_DIR} -l
 
 topic "Build Dir Path: ${SRC_DIR}"
 COMPILE_PATH=${SRC_DIR}
@@ -145,10 +128,10 @@ export | grep -E -e ' (PATH|LD_LIBRARY_PATH|LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPP
 echo "Dependencies downloaded and extracted"
 
 #DNVM configuration starts
-touch ${HOME}/.profile
-curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ${HOME}/.dnx/dnvm/dnvm.sh
+touch ${TARGET_PATH}/.profile
+curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ${TARGET_PATH}/.dnx/dnvm/dnvm.sh
 dnvm
-export DNVM_RUNTIME_LOCAL_CACHE="${HOME}/.dnx"
+export DNVM_RUNTIME_LOCAL_CACHE="${TARGET_PATH}/.dnx"
 export DNVM_RUNTIME_CACHE_LOCATION="${CACHE_DIR}/dnx/runtimes"
 mkdir -p ${DNVM_RUNTIME_LOCAL_CACHE}
 mkdir -p ${DNVM_RUNTIME_CACHE_LOCATION}
@@ -203,8 +186,8 @@ dnvm list
 
 #libuv configuration
 topic "libuv install"
-curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${COMPILE_PATH}
-cd ${COMPILE_PATH}/libuv-${LIBUV_VERSION}
+curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${TARGET_PATH}
+cd ${TARGET_PATH}/libuv-${LIBUV_VERSION}
 sh autogen.sh
 ./configure --prefix=$HOME/libuvinstall
 make
