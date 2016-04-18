@@ -150,7 +150,7 @@ echo "dnvm installed."
 export DNX_BUILD_LOCATION=${HOME}/.dnx/runtimes/
 #mkdir -p ${DNX_BUILD_LOCATION}
 DNX_VERSION=$(dnvm alias default)
-cp -r ${HOME}/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
+#cp -r ${HOME}/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
 DNX_RUNTIME_LINK=`which dnx`
 export PATH="$DNX_RUNTIME_LINK:$DNX_BUILD_LOCATION:$PATH"
 
