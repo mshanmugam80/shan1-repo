@@ -93,16 +93,16 @@ for PACKAGE in $(cat $COMPILE_PATH/Aptfile); do
   fi
 done
 
-mkdir -p ${TARGET_PATH}/.apt
+mkdir -p ${HOME}/.apt
 
 for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
   topic "Installing $(basename $DEB)"
-  dpkg -x $DEB $TARGET_PATH/.apt/
+  dpkg -x $DEB ${HOME}/.apt/
 done
 
 topic "Writing profile script"
-mkdir -p ${TARGET_PATH}/.profile.d
-cat <<EOF >${TARGET_PATH}/.profile.d/000_apt.sh
+mkdir -p ${HOME}/.profile.d
+cat <<EOF >${HOME}/.profile.d/000_apt.sh
 export PATH="\$HOME/.apt/usr/bin:\$PATH"
 export LD_LIBRARY_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu:\$HOME/.apt/usr/lib/i386-linux-gnu:\$HOME/.apt/usr/lib:\$LD_LIBRARY_PATH"
 export LIBRARY_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu:\$HOME/.apt/usr/lib/i386-linux-gnu:\$HOME/.apt/usr/lib:\$LIBRARY_PATH"
@@ -127,14 +127,12 @@ echo "Dependencies downloaded and extracted"
 #DNVM configuration starts
 touch ${HOME}/.profile
 echo "Cache Dir: ${CACHE_DIR}"
-export DNVM_RUNTIME_LOCAL_CACHE="${TARGET_PATH}/.dnx"
+export DNVM_RUNTIME_LOCAL_CACHE="${HOME}/.dnx"
 export DNVM_RUNTIME_CACHE_LOCATION="${CACHE_DIR}/dnx/runtimes"
 mkdir -p ${DNVM_RUNTIME_LOCAL_CACHE}
 mkdir -p ${DNVM_RUNTIME_CACHE_LOCATION}
 
-curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh
-cp -r ${HOME}/.dnx/* ${TARGET_PATH}/.dnx/
-source ${TARGET_PATH}/.dnx/dnvm/dnvm.sh
+curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ${HOME}/.dnx/dnvm/dnvm.sh
 dnvm
 
 export PATH="$DNVM_RUNTIME_LOCAL_CACHE:$DNVM_RUNTIME_CACHE_LOCATION:$PATH"
@@ -149,15 +147,15 @@ echo "dnvm installed."
 #echo "dnvm upgraded."
 
 #DNX setting
-export DNX_BUILD_LOCATION=${TARGET_PATH}/.dnx/runtimes/
-mkdir -p ${DNX_BUILD_LOCATION}
+export DNX_BUILD_LOCATION=${HOME}/.dnx/runtimes/
+#mkdir -p ${DNX_BUILD_LOCATION}
 DNX_VERSION=$(dnvm alias default)
-cp -r ${HOME}/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
+#cp -r ${HOME}/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
 DNX_RUNTIME_LINK=`which dnx`
 export PATH="$DNX_RUNTIME_LINK:$DNX_BUILD_LOCATION:$PATH"
 
 #DNU cache setting
-export DNU_LOCAL_CACHE="${TARGET_PATH}/.local/share/dnu"
+export DNU_LOCAL_CACHE="${HOME}/.local/share/dnu"
 export DNU_CACHE_LOCATION="${CACHE_DIR}/dnu/cache"
 mkdir -p ${DNU_LOCAL_CACHE}
 mkdir -p ${DNU_CACHE_LOCATION}
