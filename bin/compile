@@ -60,9 +60,6 @@ SRC_DIR=`mktemp -d`
 #Create Cache Directory
 mkdir -p ${CACHE_DIR}
 
-topic "SRC FILES"
-ls ${SRC_DIR} -l
-
 topic "Build Dir Path: ${SRC_DIR}"
 COMPILE_PATH=${SRC_DIR}
 
@@ -71,9 +68,6 @@ cp -rf ${LD_DIR}/bin/* ${COMPILE_PATH}/build_pack
 
 TARGET_PATH="${BUILD_DIR}/aspwebapp"
 mkdir -p ${TARGET_PATH}
-
-echo "Compile Location: ${COMPILE_PATH}"
-cd ${COMPILE_PATH}
 
 if [ -n "$BUILD_DEBUG" ]; then
 	DNU_FLAGS=""
@@ -114,11 +108,11 @@ for PACKAGE in $(cat $COMPILE_PATH/Aptfile); do
   fi
 done
 
-mkdir -p ${COMPILE_PATH}/.apt
+mkdir -p ${BUILD_DIR}/.apt
 
 for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
   topic "Installing $(basename $DEB)"
-  dpkg -x $DEB $COMPILE_PATH/.apt/
+  dpkg -x $DEB ${BUILD_DIR}/.apt/
 done
 
 topic "Writing profile script"
