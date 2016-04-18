@@ -163,9 +163,9 @@ curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminsta
 dnvm
 
 echo "dnvm installation"
+cat ${HOME}/.profile > ${BUILD_DIR}/.profile
 cat <<EOF > ${BUILD_DIR}/dnvmsetup
 #!/usr/bin/env bash
-cat ${HOME}/.profile > ${BUILD_DIR}/.profile
 source ${HOME}/.dnx/dnvm/dnvm.sh
 dnvm
 EOF
