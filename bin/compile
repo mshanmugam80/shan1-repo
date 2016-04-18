@@ -167,7 +167,7 @@ dnvm
 EOF
 
 chmod 777 ${BUILD_DIR}/dnvmsetup
-./dnvmsetup
+.${BUILD_DIR}/dnvmsetup
 echo "dnvm installed"
 
 touch ${HOME}/.profile
