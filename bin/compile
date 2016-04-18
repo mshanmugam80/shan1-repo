@@ -178,14 +178,14 @@ dnvm list
 
 #libuv configuration
 topic "libuv install"
-curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${HOMW}
-cd ${HOMW}/libuv-${LIBUV_VERSION}
+curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${HOME}
+cd ${HOME}/libuv-${LIBUV_VERSION}
 sh autogen.sh
 ./configure --prefix=$HOME/libuvinstall
 make
 make install
 export LD_LIBRARY_PATH="\$HOME/libuvinstall:$LD_LIBRARY_PATH"
-cd ${COMPILE_PATH}
+cd $OLDPWD
 topic "libuv installed."
 
 #DNU restore using project.json
