@@ -142,12 +142,12 @@ echo "dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default"
 dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default
 echo "dnvm installed."
 
-echo "DNVM to install DNX for .NET Core"
-dnvm upgrade -runtime coreclr
-echo "dnvm upgraded."
+#echo "DNVM to install DNX for .NET Core"
+#dnvm upgrade -runtime coreclr
+#echo "dnvm upgraded."
 
 #DNX setting
-export DNX_BUILD_LOCATION=${COMPILE_PATH}/.dnx/runtimes/
+export DNX_BUILD_LOCATION=${TARGET_PATH}/.dnx/runtimes/
 mkdir -p ${DNX_BUILD_LOCATION}
 DNX_VERSION=$(dnvm alias default)
 cp -r ${HOME}/.dnx/runtimes/`dnvm alias default` ${DNX_BUILD_LOCATION}
@@ -155,7 +155,7 @@ DNX_RUNTIME_LINK=`which dnx`
 export PATH="$DNX_RUNTIME_LINK:$DNX_BUILD_LOCATION:$PATH"
 
 #DNU cache setting
-export DNU_LOCAL_CACHE="${HOME}/.local/share/dnu"
+export DNU_LOCAL_CACHE="${TARGET_PATH}/.local/share/dnu"
 export DNU_CACHE_LOCATION="${CACHE_DIR}/dnu/cache"
 mkdir -p ${DNU_LOCAL_CACHE}
 mkdir -p ${DNU_CACHE_LOCATION}
