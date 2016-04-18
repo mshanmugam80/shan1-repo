@@ -129,7 +129,7 @@ touch ${HOME}/.profile
 curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ${HOME}/.dnx/dnvm/dnvm.sh
 dnvm
 
-echo "Cache Dir: ${CACHE_DIR}""
+echo "Cache Dir: ${CACHE_DIR}"
 export DNVM_RUNTIME_LOCAL_CACHE="${HOME}/.dnx"
 export DNVM_RUNTIME_CACHE_LOCATION="${CACHE_DIR}/dnx/runtimes"
 mkdir -p ${DNVM_RUNTIME_LOCAL_CACHE}
