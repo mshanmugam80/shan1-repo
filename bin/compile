@@ -158,21 +158,21 @@ export | grep -E -e ' (PATH|LD_LIBRARY_PATH|LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPP
 echo "Dependencies downloaded and extracted"
 
 #DNVM configuration starts
+touch ${HOME}/.profile
+curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ${HOME}/.dnx/dnvm/dnvm.sh
+dnvm
+
 echo "dnvm installation"
 cat <<EOF > ${BUILD_DIR}/dnvmsetup
 #!/usr/bin/env bash
-touch ${BUILD_DIR}/.profile
-curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ${BUILD_DIR}/.dnx/dnvm/dnvm.sh
+cat ${HOME}/.profile > ${BUILD_DIR}/.profile
+source ${HOME}/.dnx/dnvm/dnvm.sh
 dnvm
 EOF
 
 chmod 777 ${BUILD_DIR}/dnvmsetup
 ${BUILD_DIR}/dnvmsetup
 echo "dnvm installed"
-
-touch ${HOME}/.profile
-curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ${HOME}/.dnx/dnvm/dnvm.sh
-dnvm
 
 export DNVM_RUNTIME_LOCAL_CACHE="${HOME}/.dnx"
 export DNVM_RUNTIME_CACHE_LOCATION="${CACHE_DIR}/dnx/runtimes"
