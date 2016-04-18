@@ -165,6 +165,7 @@ echo ".profile content"
 cat ${HOME}/.profile
 
 cat ${HOME}/.profile > ${BUILD_DIR}/.profile
+echo "source ${HOME}/.dnx/dnvm/dnvm.sh" >> ${BUILD_DIR}/.profile
 echo "build dir .profile content"
 cat ${BUILD_DIR}/.profile
 
