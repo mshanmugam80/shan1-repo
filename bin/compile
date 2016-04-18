@@ -128,7 +128,7 @@ ls ${CACHE_DIR}
 
 #DNVM configuration starts
 touch ${HOME}/.profile
-curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ${TARGET_PATH}/.dnx/dnvm/dnvm.sh
+curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ${HOME}/.dnx/dnvm/dnvm.sh
 source ${TARGET_PATH}/.dnx/dnvm/dnvm.sh
 dnvm
 export DNVM_RUNTIME_LOCAL_CACHE="${TARGET_PATH}/.dnx"
