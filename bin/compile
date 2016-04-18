@@ -216,8 +216,8 @@ PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 echo "bootstrap file creation"
 cat <<EOF > ${BUILD_DIR}/bootstrap
 #!/usr/bin/env bash
-$DNX_RUNTIME_LINK --version
-web: $DNX_RUNTIME_LINK -p $PROJECT_JSON_FILE web --port $PORT
+./dnvmsetup
+web: $DNX_RUNTIME_LINK -p ${BUILD_DIR}/project.json web --port $PORT
 EOF
 
 echo "Procfile setting:-"
