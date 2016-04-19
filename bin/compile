@@ -230,11 +230,11 @@ dnvm list
 
 #libuv configuration
 topic "libuv install"
-mkdir -p $HOME/libuvinstall
+mkdir -p ${COMPILE_PATH}/libuvinstall
 curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${COMPILE_PATH}
 cd ${COMPILE_PATH}/libuv-${LIBUV_VERSION}
 sh autogen.sh
-./configure --prefix=$HOME/libuvinstall
+./configure --prefix=${COMPILE_PATH}/libuvinstall
 make
 make install
 export LD_LIBRARY_PATH="\$HOME/libuvinstall/lib:$LD_LIBRARY_PATH"
