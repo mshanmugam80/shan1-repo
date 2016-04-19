@@ -225,18 +225,17 @@ PROJECT_JSON_FILES=$(find ${COMPILE_PATH}/. -maxdepth 3 -iname "project.json")
 printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
 PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 
-#echo "bootstrap file creation"
-#cat <<EOF > ${BUILD_DIR}/bootstrap
+echo "bootstrap file creation"
+cat <<EOF > ${BUILD_DIR}/bootstrap
 #!/usr/bin/env bash
-#./dnvmsetup
-#web: $DNX_RUNTIME_LINK -p ${BUILD_DIR}/project.json web --port $PORT
-#EOF
+./dnvmsetup
+dnx --version
+exec $DNX_RUNTIME_LINK web --server.urls http://+:\$PORT
+EOF
 
 echo "Procfile setting:-"
-#echo "web: ./bootstrap" > ${BUILD_DIR}/Procfile
-echo "web: dnx web --server.urls http://+:\$PORT" > ${BUILD_DIR}/Procfile
-echo "web: dnx web --server.urls http://+:\$PORT" > $TARGET_PATH/Procfile
-#chmod 777 ${BUILD_DIR}/bootstrap
+echo "web: ./bootstrap" > ${BUILD_DIR}/Procfile
+chmod 777 ${BUILD_DIR}/bootstrap
 
 echo "dnvm runtimes"
 dnvm list
@@ -254,13 +253,15 @@ dnvm list
 #cd ${COMPILE_PATH}
 #topic "libuv installed."
 
-cat ${PROJECT_JSON_FILE} > ${TARGET_PATH}/project.json
+cp -f ${PROJECT_JSON_FILE} ${TARGET_PATH}/
+cp -f ${BUILD_DIR}/bootstrap ${TARGET_PATH}/
+cp -f ${BUILD_DIR}/Procfile ${TARGET_PATH}/
+chmod 777 ${TARGET_PATH}/bootstrap
 #DNU restore using project.json
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
 dnu restore ${DNU_FLAGS} ${PROJECT_JSON_FILE} --no-cache
 
 #DNU pulish using project.json
 topic "dnu publish starts."
-cp -r ${SRC_DIR}/* ${BUILD_DIR}/
 dnu publish --out ${TARGET_PATH} ${DNU_FLAGS} --configuration Release ${PROJECT_JSON_FILE} --no-source --runtime ${DNX_VERSION}
 topic "dnu publish ended."
