@@ -225,17 +225,17 @@ PROJECT_JSON_FILES=$(find ${COMPILE_PATH}/. -maxdepth 3 -iname "project.json")
 printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
 PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 
-echo "bootstrap file creation"
-cat <<EOF > ${BUILD_DIR}/bootstrap
+#echo "bootstrap file creation"
+#cat <<EOF > ${BUILD_DIR}/bootstrap
 #!/usr/bin/env bash
-./dnvmsetup
-web: $DNX_RUNTIME_LINK -p ${BUILD_DIR}/project.json web --port $PORT
-EOF
+#./dnvmsetup
+#web: $DNX_RUNTIME_LINK -p ${BUILD_DIR}/project.json web --port $PORT
+#EOF
 
 echo "Procfile setting:-"
-echo "web: ./bootstrap" > ${BUILD_DIR}/Procfile
-#echo "web: $DNX_RUNTIME_LINK p- $PROJECT_JSON_FILE web --server-urls http://*:$PORT" > $BUILD_DIR/Procfile
-chmod 777 ${BUILD_DIR}/bootstrap
+#echo "web: ./bootstrap" > ${BUILD_DIR}/Procfile
+echo "web: $DNX_RUNTIME_LINK p- ${BUILD_DIR}/project.json web --server-urls http://*:$PORT" > $BUILD_DIR/Procfile
+#chmod 777 ${BUILD_DIR}/bootstrap
 
 echo "dnvm runtimes"
 dnvm list
