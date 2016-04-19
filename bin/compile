@@ -230,7 +230,7 @@ cat <<EOF > ${BUILD_DIR}/bootstrap
 #!/usr/bin/env bash
 ./dnvmsetup
 dnx --version
-dnx web --server.urls http://+:\$PORT
+./approot/web --server.urls http://+:\$PORT
 EOF
 
 echo "Procfile setting:-"
