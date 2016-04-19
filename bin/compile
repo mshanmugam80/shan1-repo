@@ -123,7 +123,7 @@ sh autogen.sh
 ./configure --prefix=${BUILD_DIR}/libuvinstall
 make
 make install
-cd ${COMPILE_PATH}
+cd ${BUILD_DIR}
 topic "libuv installed."
 
 topic "Writing profile script"
@@ -170,11 +170,11 @@ export | grep -E -e ' (PATH|LD_LIBRARY_PATH|LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPP
 echo "Dependencies downloaded and extracted"
 
 #DNVM configuration starts
+echo "dnvm installation"
 touch ${HOME}/.profile
 curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ${HOME}/.dnx/dnvm/dnvm.sh
 dnvm
 
-echo "dnvm installation"
 cat ${HOME}/.profile > ${BUILD_DIR}/.profile
 cat <<EOF > ${BUILD_DIR}/dnvmsetup
 #!/usr/bin/env bash
@@ -226,38 +226,20 @@ printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr
 PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 
 echo "bootstrap file creation"
-cat <<EOF > ${BUILD_DIR}/bootstrap
+cat <<EOF > ${TARGET_PATH}/aspnetstartup
 #!/usr/bin/env bash
-./dnvmsetup
-dnx --version
 $HOME/aspwebapp/approot/web --server.urls http://+:\$PORT
 EOF
+chmod 777 ${TARGET_PATH}/aspnetstartup
 
 echo "Procfile setting:-"
-echo "web: ./bootstrap" > ${BUILD_DIR}/Procfile
-chmod 777 ${BUILD_DIR}/bootstrap
-
-echo "dnvm runtimes"
-dnvm list
-
-#libuv configuration
-#topic "libuv install"
-#mkdir -p ${COMPILE_PATH}/libuvinstall
-#curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${COMPILE_PATH}
-#cd ${COMPILE_PATH}/libuv-${LIBUV_VERSION}
-#sh autogen.sh
-#./configure --prefix=${COMPILE_PATH}/libuvinstall
-#make
-#make install
-#export LD_LIBRARY_PATH="\$HOME/libuvinstall/lib:$LD_LIBRARY_PATH"
-#cd ${COMPILE_PATH}
-#topic "libuv installed."
+echo "web: $HOME/aspwebapp/aspnetstartup" > ${TARGET_PATH}/Procfile
 
 cp -f ${PROJECT_JSON_FILE} ${TARGET_PATH}/
-cp -f ${BUILD_DIR}/bootstrap ${TARGET_PATH}/
-cp -f ${BUILD_DIR}/Procfile ${TARGET_PATH}/
+#cp -f ${BUILD_DIR}/bootstrap ${TARGET_PATH}/
+#cp -f ${BUILD_DIR}/Procfile ${TARGET_PATH}/
 cp -f ${BUILD_DIR}/dnvmsetup ${TARGET_PATH}/
-chmod 777 ${TARGET_PATH}/bootstrap
+#chmod 777 ${TARGET_PATH}/bootstrap
 chmod 777 ${TARGET_PATH}/dnvmsetup
 
 #DNU restore using project.json
