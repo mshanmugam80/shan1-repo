@@ -114,11 +114,23 @@ for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
   dpkg -x $DEB ${BUILD_DIR}/.apt/
 done
 
+#libuv configuration
+topic "libuv install"
+mkdir -p ${BUILD_DIR}/libuvinstall
+curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${BUILD_DIR}
+cd ${BUILD_DIR}/libuv-${LIBUV_VERSION}
+sh autogen.sh
+./configure --prefix=${BUILD_DIR}/libuvinstall
+make
+make install
+cd ${COMPILE_PATH}
+topic "libuv installed."
+
 topic "Writing profile script"
 mkdir -p ${COMPILE_PATH}/.profile.d
 cat <<EOF >${COMPILE_PATH}/.profile.d/000_apt.sh
 export PATH="\$HOME/.apt/usr/bin:\$PATH"
-export LD_LIBRARY_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu:\$HOME/.apt/usr/lib/i386-linux-gnu:\$HOME/.apt/usr/lib:\$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu:\$HOME/.apt/usr/lib/i386-linux-gnu:\$HOME/.apt/usr/lib:$HOME/libuvinstall/lib:\$LD_LIBRARY_PATH"
 export LIBRARY_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu:\$HOME/.apt/usr/lib/i386-linux-gnu:\$HOME/.apt/usr/lib:\$LIBRARY_PATH"
 export INCLUDE_PATH="\$HOME/.apt/usr/include:\$INCLUDE_PATH"
 export CPATH="\$INCLUDE_PATH"
@@ -127,7 +139,7 @@ export PKG_CONFIG_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu/pkgconfig:\$HOME/.a
 EOF
 
 export PATH="$COMPILE_PATH/.apt/usr/bin:$PATH"
-export LD_LIBRARY_PATH="$COMPILE_PATH/.apt/usr/lib/x86_64-linux-gnu:$COMPILE_PATH/.apt/usr/lib/i386-linux-gnu:$COMPILE_PATH/.apt/usr/lib:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="$COMPILE_PATH/.apt/usr/lib/x86_64-linux-gnu:$COMPILE_PATH/.apt/usr/lib/i386-linux-gnu:$COMPILE_PATH/.apt/usr/lib:$COMPILE_PATH/libuvinstall/lib:$LD_LIBRARY_PATH"
 export LIBRARY_PATH="$COMPILE_PATH/.apt/usr/lib/x86_64-linux-gnu:$COMPILE_PATH/.apt/usr/lib/i386-linux-gnu:$COMPILE_PATH/.apt/usr/lib:$LIBRARY_PATH"
 export INCLUDE_PATH="$COMPILE_PATH/.apt/usr/include:$INCLUDE_PATH"
 export CPATH="$INCLUDE_PATH"
@@ -137,7 +149,7 @@ export PKG_CONFIG_PATH="$COMPILE_PATH/.apt/usr/lib/x86_64-linux-gnu/pkgconfig:$C
 mkdir -p ${BUILD_DIR}/.profile.d
 cat <<EOF >${BUILD_DIR}/.profile.d/000_apt.sh
 export PATH="\$HOME/.apt/usr/bin:\$PATH"
-export LD_LIBRARY_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu:\$HOME/.apt/usr/lib/i386-linux-gnu:\$HOME/.apt/usr/lib:\$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu:\$HOME/.apt/usr/lib/i386-linux-gnu:\$HOME/.apt/usr/lib:$HOME/libuvinstall/lib:\$LD_LIBRARY_PATH"
 export LIBRARY_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu:\$HOME/.apt/usr/lib/i386-linux-gnu:\$HOME/.apt/usr/lib:\$LIBRARY_PATH"
 export INCLUDE_PATH="\$HOME/.apt/usr/include:\$INCLUDE_PATH"
 export CPATH="\$INCLUDE_PATH"
@@ -146,7 +158,7 @@ export PKG_CONFIG_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu/pkgconfig:\$HOME/.a
 EOF
 
 export PATH="${BUILD_DIR}/.apt/usr/bin:$PATH"
-export LD_LIBRARY_PATH="${BUILD_DIR}/.apt/usr/lib/x86_64-linux-gnu:${BUILD_DIR}/.apt/usr/lib/i386-linux-gnu:${BUILD_DIR}/.apt/usr/lib:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="${BUILD_DIR}/.apt/usr/lib/x86_64-linux-gnu:${BUILD_DIR}/.apt/usr/lib/i386-linux-gnu:${BUILD_DIR}/.apt/usr/lib:${BUILD_DIR}/libuvinstall/lib:$LD_LIBRARY_PATH"
 export LIBRARY_PATH="${BUILD_DIR}/.apt/usr/lib/x86_64-linux-gnu:${BUILD_DIR}/.apt/usr/lib/i386-linux-gnu:${BUILD_DIR}/.apt/usr/lib:$LIBRARY_PATH"
 export INCLUDE_PATH="${BUILD_DIR}/.apt/usr/include:$INCLUDE_PATH"
 export CPATH="$INCLUDE_PATH"
@@ -229,17 +241,17 @@ echo "dnvm runtimes"
 dnvm list
 
 #libuv configuration
-topic "libuv install"
-mkdir -p ${COMPILE_PATH}/libuvinstall
-curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${COMPILE_PATH}
-cd ${COMPILE_PATH}/libuv-${LIBUV_VERSION}
-sh autogen.sh
-./configure --prefix=${COMPILE_PATH}/libuvinstall
-make
-make install
-export LD_LIBRARY_PATH="\$HOME/libuvinstall/lib:$LD_LIBRARY_PATH"
-cd ${COMPILE_PATH}
-topic "libuv installed."
+#topic "libuv install"
+#mkdir -p ${COMPILE_PATH}/libuvinstall
+#curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${COMPILE_PATH}
+#cd ${COMPILE_PATH}/libuv-${LIBUV_VERSION}
+#sh autogen.sh
+#./configure --prefix=${COMPILE_PATH}/libuvinstall
+#make
+#make install
+#export LD_LIBRARY_PATH="\$HOME/libuvinstall/lib:$LD_LIBRARY_PATH"
+#cd ${COMPILE_PATH}
+#topic "libuv installed."
 
 cat ${PROJECT_JSON_FILE} > ${BUILD_DIR}/project.json
 #DNU restore using project.json
