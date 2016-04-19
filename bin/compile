@@ -230,7 +230,7 @@ cat <<EOF > ${BUILD_DIR}/bootstrap
 #!/usr/bin/env bash
 ./dnvmsetup
 dnx --version
-web: exec $DNX_RUNTIME_LINK web --server.urls http://+:\$PORT
+dnx web --server.urls http://+:\$PORT
 EOF
 
 echo "Procfile setting:-"
