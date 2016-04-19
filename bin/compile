@@ -63,7 +63,15 @@ mkdir -p ${CACHE_DIR}
 topic "Build Dir Path: ${SRC_DIR}"
 COMPILE_PATH=${SRC_DIR}
 
-TARGET_PATH="${BUILD_DIR}/aspwebapp"
+#Find project.json
+PROJECT_JSON_FILES=$(find ${COMPILE_PATH}/. -maxdepth 3 -iname "project.json")
+printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
+PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
+
+#Get app name
+APP_NAME=`grep -Po '(?<="name": ")[^"]*' $PROJECT_JSON_FILE`
+
+TARGET_PATH="${BUILD_DIR}/${APP_NAME}"
 mkdir -p ${TARGET_PATH}
 
 if [ -n "$BUILD_DEBUG" ]; then
@@ -220,17 +228,12 @@ export PATH="$DNX_RUNTIME_LINK:$DNX_BUILD_LOCATION:$PATH"
 #ln -s ${DNU_CACHE_LOCATION} ${DNU_LOCAL_CACHE}/cache 
 #export PATH="$DNU_LOCAL_CACHE:$DNU_CACHE_LOCATION:$PATH"
 
-#Find project.json
-PROJECT_JSON_FILES=$(find ${COMPILE_PATH}/. -maxdepth 3 -iname "project.json")
-printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
-PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
-
 echo "bootstrap file creation"
 cat <<EOF > ${BUILD_DIR}/bootstrap
 #!/usr/bin/env bash
 ./dnvmsetup
 dnx --version
-$HOME/aspwebapp/approot/web --server.urls http://+:\$PORT
+$HOME/$APP_NAME/approot/web --server.urls http://+:\$PORT
 EOF
 
 echo "Procfile setting:-"
