@@ -234,7 +234,7 @@ PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 
 echo "Procfile setting:-"
 #echo "web: ./bootstrap" > ${BUILD_DIR}/Procfile
-echo "web: $DNX_RUNTIME_LINK p- ${BUILD_DIR}/project.json web --server-urls http://*:$PORT" > $BUILD_DIR/Procfile
+echo "web: $DNX_RUNTIME_LINK p- ${BUILD_DIR}/project.json web --server.urls http://+:\$PORT" > $BUILD_DIR/Procfile
 #chmod 777 ${BUILD_DIR}/bootstrap
 
 echo "dnvm runtimes"
