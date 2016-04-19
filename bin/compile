@@ -256,7 +256,10 @@ dnvm list
 cp -f ${PROJECT_JSON_FILE} ${TARGET_PATH}/
 cp -f ${BUILD_DIR}/bootstrap ${TARGET_PATH}/
 cp -f ${BUILD_DIR}/Procfile ${TARGET_PATH}/
+cp -f ${BUILD_DIR}/dnvmsetup ${TARGET_PATH}/
 chmod 777 ${TARGET_PATH}/bootstrap
+chmod 777 ${TARGET_PATH}/dnvmsetup
+
 #DNU restore using project.json
 echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
 dnu restore ${DNU_FLAGS} ${PROJECT_JSON_FILE} --no-cache
