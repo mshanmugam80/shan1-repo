@@ -1,2 +1,2 @@
-# heroku-buildpack
-First buildpack creation for dotnet
+# sample-buildpack
+First buildpack creation
