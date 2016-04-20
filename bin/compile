@@ -11,14 +11,11 @@ fi
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
-echo "cache dir: $CACHE_DIR"
+: ${LIBUV_VERSION:="1.8.0"}
+: ${DNVM_BRANCH:="dev"}
+: ${DNX_VERSION:="latest"}
 
-function error() {
-  echo " !     $*" >&2
-  exit 1
-}
-
-function topic() {
+function print() {
   echo "-----> $*"
 }
 
@@ -43,36 +40,34 @@ function export_env_dir() {
   fi
 }
 
-: ${LIBUV_VERSION:="1.8.0"}
-: ${DNVM_BRANCH:="dev"}
-: ${DNX_VERSION:="latest"}
-
 LD_DIR=`cd $(dirname $0); cd ..; pwd`
 export_env_dir ${ENV_DIR}
 
+# Create Cache Directory
+mkdir -p ${CACHE_DIR}
+
+# Create Source Directory
+# If you compiled from build dirctory directly then dnu publish throws error due to directory name
+# contains underscore '_'. dnu will not support
 SRC_DIR=`mktemp -d`
-# Move the app source code into temporary src dir using subshell to not leak shopt
+# Move source code into temporary src dir
 (
     shopt -s dotglob
     mv ${BUILD_DIR}/* ${SRC_DIR}
 )
+print "Build Dir Path: ${SRC_DIR}"
 
-#Create Cache Directory
-mkdir -p ${CACHE_DIR}
-
-topic "Build Dir Path: ${SRC_DIR}"
-COMPILE_PATH=${SRC_DIR}
-
-#Find project.json
-PROJECT_JSON_FILES=$(find ${COMPILE_PATH}/. -maxdepth 3 -iname "project.json")
+# Find project.json
+PROJECT_JSON_FILES=$(find ${SRC_DIR}/. -maxdepth 3 -iname "project.json")
 printf 'Found %s project.json files\n' $(echo "$PROJECT_JSON_FILES" | wc -l | tr -d ' ')
 PROJECT_JSON_FILE=$(echo "$PROJECT_JSON_FILES" | head -1)
 
-#Get app name
-APP_NAME=`grep -Po '(?<="name": ")[^"]*' $PROJECT_JSON_FILE`
+# Get app name from project.json
+APPNAME=`grep -Po '(?<="name": ")[^"]*' $PROJECT_JSON_FILE`
 
-TARGET_PATH="${BUILD_DIR}/${APP_NAME}"
-mkdir -p ${TARGET_PATH}
+# Create publish directory
+#TARGET_PATH="${BUILD_DIR}/${APP_NAME}"
+#mkdir -p ${TARGET_PATH}
 
 if [ -n "$BUILD_DEBUG" ]; then
 	DNU_FLAGS=""
@@ -88,7 +83,8 @@ else
 	DNVM_FLAGS=""
 fi
 
-cat <<EOF > ${COMPILE_PATH}/Aptfile
+# Create Aptfile with prerequisites package names and its download urls
+cat <<EOF > ${BUILD_DIR}/Aptfile
 libunwind8
 http://in.archive.ubuntu.com/ubuntu/pool/main/libu/libunwind/libunwind8_1.1-2.2ubuntu3_amd64.deb
 gettext
@@ -113,63 +109,41 @@ mkdir -p "$APT_STATE_DIR/lists/partial"
 
 APT_OPTIONS="-o debug::nolocking=true -o dir::cache=$APT_CACHE_DIR -o dir::state=$APT_STATE_DIR"
 
-topic "Updating apt caches"
-#apt-get $APT_OPTIONS update | indent
+print "Updating apt caches"
+apt-get $APT_OPTIONS update | indent
 
-# Download prerequisite packages from Aptfile
-for PACKAGE in $(cat $COMPILE_PATH/Aptfile); do
+# Download prerequisite packages using Aptfile
+for PACKAGE in $(cat $BUILD_DIR/Aptfile); do
   if [[ $PACKAGE == *deb ]]; then
     PACKAGE_NAME=$(basename $PACKAGE .deb)
     PACKAGE_FILE=$APT_CACHE_DIR/archives/$PACKAGE_NAME.deb
 
-    topic "Fetching $PACKAGE"
+    print "Fetching $PACKAGE"
     curl -s -L -z $PACKAGE_FILE -o $PACKAGE_FILE $PACKAGE 2>&1 | indent
   else
-    topic "Fetching .debs for $PACKAGE"
+    print "Fetching .debs for $PACKAGE"
     apt-get $APT_OPTIONS -y --force-yes -d install --reinstall $PACKAGE | indent
   fi
 done
 
-mkdir -p ${COMPILE_PATH}/.apt
 mkdir -p ${BUILD_DIR}/.apt
-
 for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
-  topic "Installing $(basename $DEB)"
-  dpkg -x $DEB ${COMPILE_PATH}/.apt/
+  print "Installing $(basename $DEB)"
   dpkg -x $DEB ${BUILD_DIR}/.apt/
 done
 
-#libuv configuration
-topic "libuv install"
-mkdir -p ${BUILD_DIR}/libuvinstall
-curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${BUILD_DIR}
-cd ${BUILD_DIR}/libuv-${LIBUV_VERSION}
-sh autogen.sh
-./configure --prefix=${BUILD_DIR}/libuvinstall
-make
-make install
-cd ${COMPILE_PATH}
-topic "libuv installed."
-
-topic "Writing profile script"
-mkdir -p ${COMPILE_PATH}/.profile.d
-cat <<EOF >${COMPILE_PATH}/.profile.d/000_apt.sh
-export PATH="\$HOME/.apt/usr/bin:\$PATH"
-export LD_LIBRARY_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu:\$HOME/.apt/usr/lib/i386-linux-gnu:\$HOME/.apt/usr/lib:$HOME/libuvinstall/lib:\$LD_LIBRARY_PATH"
-export LIBRARY_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu:\$HOME/.apt/usr/lib/i386-linux-gnu:\$HOME/.apt/usr/lib:\$LIBRARY_PATH"
-export INCLUDE_PATH="\$HOME/.apt/usr/include:\$INCLUDE_PATH"
-export CPATH="\$INCLUDE_PATH"
-export CPPPATH="\$INCLUDE_PATH"
-export PKG_CONFIG_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu/pkgconfig:\$HOME/.apt/usr/lib/i386-linux-gnu/pkgconfig:\$HOME/.apt/usr/lib/pkgconfig:\$PKG_CONFIG_PATH"
-EOF
-
-export PATH="$COMPILE_PATH/.apt/usr/bin:$PATH"
-export LD_LIBRARY_PATH="$COMPILE_PATH/.apt/usr/lib/x86_64-linux-gnu:$COMPILE_PATH/.apt/usr/lib/i386-linux-gnu:$COMPILE_PATH/.apt/usr/lib:$COMPILE_PATH/libuvinstall/lib:$LD_LIBRARY_PATH"
-export LIBRARY_PATH="$COMPILE_PATH/.apt/usr/lib/x86_64-linux-gnu:$COMPILE_PATH/.apt/usr/lib/i386-linux-gnu:$COMPILE_PATH/.apt/usr/lib:$LIBRARY_PATH"
-export INCLUDE_PATH="$COMPILE_PATH/.apt/usr/include:$INCLUDE_PATH"
-export CPATH="$INCLUDE_PATH"
-export CPPPATH="$INCLUDE_PATH"
-export PKG_CONFIG_PATH="$COMPILE_PATH/.apt/usr/lib/x86_64-linux-gnu/pkgconfig:$COMPILE_PATH/.apt/usr/lib/i386-linux-gnu/pkgconfig:$COMPILE_PATH/.apt/usr/lib/pkgconfig:$PKG_CONFIG_PATH"
+# libuv configuration
+#print "libuv install"
+#mkdir -p ${BUILD_DIR}/libuvinstall
+#curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${BUILD_DIR}
+#cd ${BUILD_DIR}/libuv-${LIBUV_VERSION}
+#sh autogen.sh
+#./configure --prefix=${BUILD_DIR}/libuvinstall
+#make
+#make install
+#cd ${SRC_DIR}
+#rm -rf ${BUILD_DIR}/libuv-${LIBUV_VERSION}
+#print "libuv installed."
 
 mkdir -p ${BUILD_DIR}/.profile.d
 cat <<EOF >${BUILD_DIR}/.profile.d/000_apt.sh
@@ -190,25 +164,13 @@ export CPATH="$INCLUDE_PATH"
 export CPPPATH="$INCLUDE_PATH"
 export PKG_CONFIG_PATH="${BUILD_DIR}/.apt/usr/lib/x86_64-linux-gnu/pkgconfig:${BUILD_DIR}/.apt/usr/lib/i386-linux-gnu/pkgconfig:${BUILD_DIR}/.apt/usr/lib/pkgconfig:$PKG_CONFIG_PATH"
 
-#give environment to later buildpacks
 export | grep -E -e ' (PATH|LD_LIBRARY_PATH|LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPPATH|PKG_CONFIG_PATH)='  > "$LD_DIR/export"
-echo "Dependencies downloaded and extracted"
 
-#DNVM configuration starts
+# DNVM configuration starts
+print "dnvm installation starts"
 touch ${HOME}/.profile
 curl -sSL https://raw.githubusercontent.com/aspnet/Home/${DNVM_BRANCH}/dnvminstall.sh | DNX_BRANCH=dev sh && source ${HOME}/.dnx/dnvm/dnvm.sh
 dnvm
-
-echo "dnvm installation"
-cat ${HOME}/.profile > ${BUILD_DIR}/.profile
-cat <<EOF > ${BUILD_DIR}/dnvmsetup
-#!/usr/bin/env bash
-source .dnx/dnvm/dnvm.sh
-dnvm
-EOF
-
-chmod 777 ${BUILD_DIR}/dnvmsetup
-echo "dnvm installed"
 
 export DNVM_RUNTIME_LOCAL_CACHE="${HOME}/.dnx"
 export DNVM_RUNTIME_CACHE_LOCATION="${CACHE_DIR}/dnx/runtimes"
@@ -217,61 +179,39 @@ mkdir -p ${DNVM_RUNTIME_CACHE_LOCATION}
 export PATH="$DNVM_RUNTIME_LOCAL_CACHE:$DNVM_RUNTIME_CACHE_LOCATION:$PATH"
 ln -s ${DNVM_RUNTIME_CACHE_LOCATION} ${DNVM_RUNTIME_LOCAL_CACHE}/runtimes
 
-echo "dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default"
+# DNX configuration
 dnvm install $DNX_VERSION $DNVM_FLAGS -runtime coreclr -alias default
 mkdir -p ${BUILD_DIR}/.dnx
-cp -r ${HOME}/.dnx/* ${BUILD_DIR}/.dnx
+cp -r ${HOME}/.dnx/* ${BUILD_DIR}/.dnx/
 export DNVM_RUNTIME_TARGET_CACHE="${BUILD_DIR}/.dnx"
 export PATH="$DNVM_RUNTIME_TARGET_CACHE:$PATH"
-echo "dnvm installed."
 
-#echo "DNVM to install DNX for .NET Core"
+# "DNVM upgrade starts"
 #dnvm upgrade -runtime coreclr
-#echo "dnvm upgraded."
+#print "dnvm upgraded."
 
-#DNX setting
-export DNX_BUILD_LOCATION=${COMPILE_PATH}/.dnx/
-mkdir -p ${DNX_BUILD_LOCATION}
+# DNX setting
 DNX_VERSION=$(dnvm alias default)
-cp -r ${HOME}/.dnx/* ${DNX_BUILD_LOCATION}
-DNX_RUNTIME_LINK=`which dnx`
-export PATH="$DNX_RUNTIME_LINK:$DNX_BUILD_LOCATION:$PATH"
+#DNX_RUNTIME_LINK=`which dnx`
+#export PATH="$DNX_RUNTIME_LINK:$PATH"
 
-#DNU cache setting
-#export DNU_LOCAL_CACHE="${HOME}/.local/share/dnu"
-#export DNU_CACHE_LOCATION="${CACHE_DIR}/dnu/cache"
-#mkdir -p ${DNU_LOCAL_CACHE}
-#mkdir -p ${DNU_CACHE_LOCATION}
-#ln -s ${DNU_CACHE_LOCATION} ${DNU_LOCAL_CACHE}/cache 
-#export PATH="$DNU_LOCAL_CACHE:$DNU_CACHE_LOCATION:$PATH"
-
-echo "bootstrap file creation"
-cat <<EOF > ${BUILD_DIR}/bootstrap
+# app start up script
+cat <<EOF > ${BUILD_DIR}/appstartup
 #!/usr/bin/env bash
-./dnvmsetup
-dnx --version
-$HOME/$APP_NAME/approot/web --server.urls http://+:\$PORT
+$HOME/approot/console
 EOF
+chmod 777 ${BUILD_DIR}/appstartup
 
-echo "Procfile setting:-"
-echo "web: ./bootstrap" > ${BUILD_DIR}/Procfile
-chmod 777 ${BUILD_DIR}/bootstrap
+# Create procfile
+print "Procfile setting:-"
+echo "console: ./appstartup" > ${BUILD_DIR}/Procfile
 
-echo "dnvm runtimes"
-dnvm list
-
-cp -f ${PROJECT_JSON_FILE} ${TARGET_PATH}/
-cp -f ${BUILD_DIR}/bootstrap ${TARGET_PATH}/
-cp -f ${BUILD_DIR}/Procfile ${TARGET_PATH}/
-cp -f ${BUILD_DIR}/dnvmsetup ${TARGET_PATH}/
-chmod 777 ${TARGET_PATH}/bootstrap
-chmod 777 ${TARGET_PATH}/dnvmsetup
-
-#DNU restore using project.json
-echo "dnu restore $DNU_FLAGS ${PROJECT_JSON_FILE}"
+# DNU restore using project.json
+print "dnu restore starts"
 dnu restore ${DNU_FLAGS} ${PROJECT_JSON_FILE} --no-cache
+print "dnu restore ended."
 
-#DNU pulish using project.json
-topic "dnu publish starts."
-dnu publish --out ${TARGET_PATH} ${DNU_FLAGS} --configuration Release ${PROJECT_JSON_FILE} --no-source --runtime ${DNX_VERSION}
-topic "dnu publish ended."
+# DNU pulish using project.json
+print "dnu publish starts."
+dnu publish --out ${BUILD_DIR} ${DNU_FLAGS} --configuration Release ${PROJECT_JSON_FILE} --no-source --runtime ${DNX_VERSION}
+print "dnu publish ended."
