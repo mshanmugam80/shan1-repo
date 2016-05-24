@@ -138,13 +138,13 @@ DNX_VERSION=$(dnvm alias default)
 # app start up script
 cat <<EOF > ${BUILD_DIR}/appstartup
 #!/usr/bin/env bash
-$HOME/approot/console
+$HOME/approot/console console
 EOF
 chmod 777 ${BUILD_DIR}/appstartup
 
 # Create procfile
 print "Procfile setting:-"
-echo "worker: ./appstartup console" > ${BUILD_DIR}/Procfile
+echo "console: ./appstartup" > ${BUILD_DIR}/Procfile
 
 # DNU restore using project.json
 print "dnu restore starts"
