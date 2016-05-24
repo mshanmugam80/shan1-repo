@@ -138,7 +138,7 @@ DNX_VERSION=$(dnvm alias default)
 # app start up script
 cat <<EOF > ${BUILD_DIR}/appstartup
 #!/usr/bin/env bash
-$HOME/approot/run
+$HOME/approot/console
 EOF
 chmod 777 ${BUILD_DIR}/appstartup
 
