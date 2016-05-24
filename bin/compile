@@ -144,7 +144,7 @@ chmod 777 ${BUILD_DIR}/appstartup
 
 # Create procfile
 print "Procfile setting:-"
-echo "console: ./appstartup" > ${BUILD_DIR}/Procfile
+echo "console: ./appstartup console" > ${BUILD_DIR}/Procfile
 
 # DNU restore using project.json
 print "dnu restore starts"
