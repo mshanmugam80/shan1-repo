@@ -83,72 +83,16 @@ else
 	DNVM_FLAGS=""
 fi
 
-# Create Aptfile with prerequisites package names and its download urls
-#cat <<EOF > ${BUILD_DIR}/Aptfile
-#libunwind8
-#http://in.archive.ubuntu.com/ubuntu/pool/main/libu/libunwind/libunwind8_1.1-2.2ubuntu3_amd64.deb
-#gettext
-#http://in.archive.ubuntu.com/ubuntu/pool/main/g/gettext/gettext_0.18.3.1-1ubuntu3_amd64.deb
-#libssl-dev
-#http://in.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl-dev_1.0.1f-1ubuntu2.19_amd64.deb
-#libcurl4-openssl-dev
-#http://in.archive.ubuntu.com/ubuntu/pool/main/c/curl/libcurl4-openssl-dev_7.35.0-1ubuntu2.6_amd64.deb
-#zlib1g
-#http://in.archive.ubuntu.com/ubuntu/pool/main/z/zlib/zlib1g_1.2.8.dfsg-1ubuntu1_amd64.deb
-#libicu-dev
-#http://in.archive.ubuntu.com/ubuntu/pool/main/i/icu/libicu-dev_52.1-3ubuntu0.4_amd64.deb
-#uuid-dev
-#http://in.archive.ubuntu.com/ubuntu/pool/main/u/util-linux/uuid-dev_2.20.1-5.1ubuntu20.7_amd64.deb
-#EOF
-
-#APT_CACHE_DIR="$CACHE_DIR/apt/cache"
-#APT_STATE_DIR="$CACHE_DIR/apt/state"
-
-#mkdir -p "$APT_CACHE_DIR/archives/partial"
-#mkdir -p "$APT_STATE_DIR/lists/partial"
-
-#APT_OPTIONS="-o debug::nolocking=true -o dir::cache=$APT_CACHE_DIR -o dir::state=$APT_STATE_DIR"
-
-#print "Updating apt caches"
-#apt-get $APT_OPTIONS update | indent
-
-# Download prerequisite packages using Aptfile
-#for PACKAGE in $(cat $BUILD_DIR/Aptfile); do
-#  if [[ $PACKAGE == *deb ]]; then
-#    PACKAGE_NAME=$(basename $PACKAGE .deb)
-#    PACKAGE_FILE=$APT_CACHE_DIR/archives/$PACKAGE_NAME.deb
-
-#    print "Fetching $PACKAGE"
-#    curl -s -L -z $PACKAGE_FILE -o $PACKAGE_FILE $PACKAGE 2>&1 | indent
-#  else
-#    print "Fetching .debs for $PACKAGE"
-#    apt-get $APT_OPTIONS -y --force-yes -d install --reinstall $PACKAGE | indent
-#  fi
-#done
-
 mkdir -p ${BUILD_DIR}/.apt
 for DEB in $(ls -1 $LD_DIR/lib/*.deb); do
   print "Installing $(basename $DEB)"
   dpkg -x $DEB ${BUILD_DIR}/.apt/
 done
 
-# libuv configuration
-print "libuv install"
-mkdir -p ${BUILD_DIR}/libuvinstall
-curl -sSL https://github.com/libuv/libuv/archive/v${LIBUV_VERSION}.tar.gz | tar zxfv - -C ${BUILD_DIR}
-cd ${BUILD_DIR}/libuv-${LIBUV_VERSION}
-sh autogen.sh
-./configure --prefix=${BUILD_DIR}/libuvinstall
-make
-make install
-cd ${SRC_DIR}
-rm -rf ${BUILD_DIR}/libuv-${LIBUV_VERSION}
-print "libuv installed."
-
 mkdir -p ${BUILD_DIR}/.profile.d
 cat <<EOF >${BUILD_DIR}/.profile.d/000_apt.sh
 export PATH="\$HOME/.apt/usr/bin:\$PATH"
-export LD_LIBRARY_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu:\$HOME/.apt/usr/lib/i386-linux-gnu:\$HOME/.apt/usr/lib:$HOME/libuvinstall/lib:\$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu:\$HOME/.apt/usr/lib/i386-linux-gnu:\$HOME/.apt/usr/lib:\$LD_LIBRARY_PATH"
 export LIBRARY_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu:\$HOME/.apt/usr/lib/i386-linux-gnu:\$HOME/.apt/usr/lib:\$LIBRARY_PATH"
 export INCLUDE_PATH="\$HOME/.apt/usr/include:\$INCLUDE_PATH"
 export CPATH="\$INCLUDE_PATH"
@@ -157,7 +101,7 @@ export PKG_CONFIG_PATH="\$HOME/.apt/usr/lib/x86_64-linux-gnu/pkgconfig:\$HOME/.a
 EOF
 
 export PATH="${BUILD_DIR}/.apt/usr/bin:$PATH"
-export LD_LIBRARY_PATH="${BUILD_DIR}/.apt/usr/lib/x86_64-linux-gnu:${BUILD_DIR}/.apt/usr/lib/i386-linux-gnu:${BUILD_DIR}/.apt/usr/lib:${BUILD_DIR}/libuvinstall/lib:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="${BUILD_DIR}/.apt/usr/lib/x86_64-linux-gnu:${BUILD_DIR}/.apt/usr/lib/i386-linux-gnu:${BUILD_DIR}/.apt/usr/lib:$LD_LIBRARY_PATH"
 export LIBRARY_PATH="${BUILD_DIR}/.apt/usr/lib/x86_64-linux-gnu:${BUILD_DIR}/.apt/usr/lib/i386-linux-gnu:${BUILD_DIR}/.apt/usr/lib:$LIBRARY_PATH"
 export INCLUDE_PATH="${BUILD_DIR}/.apt/usr/include:$INCLUDE_PATH"
 export CPATH="$INCLUDE_PATH"
@@ -185,10 +129,6 @@ mkdir -p ${BUILD_DIR}/.dnx
 cp -r ${HOME}/.dnx/* ${BUILD_DIR}/.dnx/
 export DNVM_RUNTIME_TARGET_CACHE="${BUILD_DIR}/.dnx"
 export PATH="$DNVM_RUNTIME_TARGET_CACHE:$PATH"
-
-# "DNVM upgrade starts"
-#dnvm upgrade -runtime coreclr
-#print "dnvm upgraded."
 
 # DNX setting
 DNX_VERSION=$(dnvm alias default)
